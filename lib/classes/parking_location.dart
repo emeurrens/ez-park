@@ -37,6 +37,12 @@ enum LotSize {
   small
 }
 
+enum TimeRestrictions {
+  standard,
+  extended,
+  allDay
+}
+
 const Set<String> weekdays = <String>{
   "Monday",
   "Tuesday",
@@ -67,17 +73,26 @@ class ParkingLocation {
       this.requiredDecals,
       this.maxCapacity);
 
-  ParkingLocation.usingEnums(LatLng loc, TimeOfDay resStart, TimeOfDay resEnd,
-      DayRestrictions restrictions, Set<DecalType> reqDecals, LotSize lotSize){
+  ParkingLocation.usingEnums(LatLng loc, TimeRestrictions timeRestrictions,
+      DayRestrictions dayRestrictions, Set<DecalType> reqDecals, LotSize lotSize){
     location = loc;
-    restrictionStart = resStart;
-    restrictionEnd = resEnd;
 
-    if (restrictions == DayRestrictions.all) {
+    if(timeRestrictions == TimeRestrictions.allDay) {
+      restrictionStart = const TimeOfDay(hour: 0, minute: 0);
+      restrictionEnd = const TimeOfDay(hour: 23, minute: 59);
+    } else if (timeRestrictions == TimeRestrictions.extended) {
+      restrictionStart = const TimeOfDay(hour: 7, minute: 30);
+      restrictionEnd = const TimeOfDay(hour: 17, minute: 30);
+    } else {
+      restrictionStart = const TimeOfDay(hour: 8, minute: 30);
+      restrictionEnd = const TimeOfDay(hour: 15, minute: 30);
+    }
+
+    if (dayRestrictions == DayRestrictions.all) {
       restrictedDays = weekdays.union(weekends);
-    } else if (restrictions == DayRestrictions.weekends) {
+    } else if (dayRestrictions == DayRestrictions.weekends) {
       restrictedDays = weekends;
-    } else if (restrictions == DayRestrictions.weekdays) {
+    } else if (dayRestrictions == DayRestrictions.weekdays) {
       restrictedDays = weekdays;
     } else {
       restrictedDays = <String>{};
