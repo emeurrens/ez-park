@@ -22,14 +22,15 @@ class MapSampleState extends State<MapSample> {
   Map<MarkerId, Marker> mapMarkers = <MarkerId, Marker>{};
   MarkerId? selectedMarker;
 
-  static LatLng _userPosition = defaultParkingLocation.location;
-  static LatLng _targetPosition = defaultParkingLocation.location;
+  static LatLng _userPosition =
+      currentParkingLocations.selectedParkingLocation.location;
+  static LatLng _targetPosition =
+      currentParkingLocations.selectedParkingLocation.location;
 
   static CameraPosition _kUserPosition = CameraPosition(
     target: _userPosition,
     zoom: 18,
   );
-
 
   static CameraPosition _kTargetPosition = CameraPosition(
     target: _targetPosition,
@@ -39,22 +40,36 @@ class MapSampleState extends State<MapSample> {
   @override
   void initState() {
     super.initState();
+    _targetPosition = currentParkingLocations.selectedParkingLocation.location;
+    _kTargetPosition = CameraPosition(
+      target: _targetPosition,
+      zoom: 18,
+    );
     _getUserLocation();
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      //_selectedIndex = index;
+
+      if (index == 1) {
+        _launchMapsUrl(_targetPosition);
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: GoogleMap(
-        mapType: MapType.hybrid,
-        initialCameraPosition: _kTargetPosition,
-        onMapCreated: (GoogleMapController controller) {
-          _controller.complete(controller);
-          _addMarkers();
-        },
-        myLocationEnabled: true,
-        markers: Set<Marker>.of(mapMarkers.values)
-      ),
+          mapType: MapType.hybrid,
+          initialCameraPosition: _kTargetPosition,
+          onMapCreated: (GoogleMapController controller) {
+            _controller.complete(controller);
+            _addMarkers();
+          },
+          myLocationEnabled: true,
+          markers: Set<Marker>.of(mapMarkers.values)),
       floatingActionButton: Align(
         alignment: Alignment.bottomCenter,
         child: FloatingActionButton.extended(
@@ -71,13 +86,19 @@ class MapSampleState extends State<MapSample> {
     _setSelectedMarker(tappedMarker);
   }
 
-  void _setSelectedMarker(Marker? tappedMarker){
-    if(tappedMarker != null) {
+  void _setSelectedMarker(Marker? tappedMarker) {
+    if (tappedMarker != null) {
       setState(() {
         final MarkerId? previousMarkerId = selectedMarker;
-        if (previousMarkerId != null && mapMarkers.containsKey(previousMarkerId)) {
-          final Marker resetOld = mapMarkers[previousMarkerId]!
-              .copyWith(iconParam: BitmapDescriptor.defaultMarker);
+        _targetPosition = currentParkingLocations
+            .selectParkingLocation(tappedMarker.markerId.value)
+            .location;
+
+        if (previousMarkerId != null &&
+            mapMarkers.containsKey(previousMarkerId)) {
+          final Marker resetOld = mapMarkers[previousMarkerId]!.copyWith(
+              iconParam: BitmapDescriptor.defaultMarkerWithHue(
+                  _getAppropriateMarkerColor(previousMarkerId.value)));
           mapMarkers[previousMarkerId] = resetOld;
         }
         selectedMarker = tappedMarker.markerId;
@@ -86,10 +107,19 @@ class MapSampleState extends State<MapSample> {
             BitmapDescriptor.hueGreen,
           ),
         );
-        _targetPosition = currentParkingLocations.selectParkingLocation(tappedMarker.markerId.value).location;
+        _targetPosition = currentParkingLocations
+            .filteredParkingLocations[tappedMarker.markerId.value]!.location;
         mapMarkers[tappedMarker.markerId] = newMarker;
       });
     }
+  }
+
+  double _getAppropriateMarkerColor(String locationName) {
+    if (locationName == currentParkingLocations.selectedParkingLocation.name) {
+      return BitmapDescriptor.hueGreen;
+    }
+
+    return BitmapDescriptor.hueRed;
   }
 
   void _addMarkers() {
@@ -127,25 +157,28 @@ class MapSampleState extends State<MapSample> {
   Future<void> _findClosestParking() async {
     final GoogleMapController controller = await _controller.future;
     await _getUserLocation().then((value) => setState(() {
-        int minDistance = 0x7fffffffffffffff; //int max
-        ParkingLocation closestLocation = defaultParkingLocation;
-        currentParkingLocations.filteredParkingLocations.forEach((name, parkingLocation) {
-          int distanceFromUser = haversineDistance(_userPosition, parkingLocation.location);
-          if(distanceFromUser < minDistance){
-            minDistance = distanceFromUser;
-            closestLocation = parkingLocation;
-          }
-        });
-        _setTargetLocation(closestLocation.location);
-        _setSelectedMarker(mapMarkers[MarkerId(closestLocation.name)]);
-        _goToTargetLocation();
-    }));
+          int minDistance = 0x7fffffffffffffff; //int max
+          ParkingLocation closestLocation = defaultParkingLocation;
+          currentParkingLocations.filteredParkingLocations
+              .forEach((name, parkingLocation) {
+            int distanceFromUser =
+                haversineDistance(_userPosition, parkingLocation.location);
+            if (distanceFromUser < minDistance) {
+              minDistance = distanceFromUser;
+              closestLocation = parkingLocation;
+            }
+          });
+          _setTargetLocation(closestLocation.location);
+          _setSelectedMarker(mapMarkers[MarkerId(closestLocation.name)]);
+          _goToTargetLocation();
+        }));
 
     controller.animateCamera(CameraUpdate.newCameraPosition(_kUserPosition));
   }
 
   Future<void> _getUserLocation() async {
-    Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
     setState(() {
       _userPosition = LatLng(position.latitude, position.longitude);
       _kUserPosition = CameraPosition(
@@ -154,7 +187,7 @@ class MapSampleState extends State<MapSample> {
       );
     });
   }
-  
+
   void _setTargetLocation(LatLng latLng) async {
     setState(() {
       _targetPosition = latLng;
@@ -163,6 +196,18 @@ class MapSampleState extends State<MapSample> {
         zoom: 18,
       );
     });
+  }
+
+  void _launchMapsUrl(LatLng latLng) async {
+    double lat = latLng.latitude;
+    double lng = latLng.longitude;
+
+    final url = 'https://www.google.com/maps/search/?api=1&query=$lat,$lng';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 
   /*
@@ -178,9 +223,10 @@ class MapSampleState extends State<MapSample> {
     double lam2 = point2.longitude;
     int R = 6371000;
 
-    return (2 * R *
-        asin( sqrt( pow(sin((phi2-phi1)/2), 2) +
-            cos(phi1)*cos(phi2)*pow(sin((lam2-lam1)/2),2))
-        )).toInt();
+    return (2 *
+            R *
+            asin(sqrt(pow(sin((phi2 - phi1) / 2), 2) +
+                cos(phi1) * cos(phi2) * pow(sin((lam2 - lam1) / 2), 2))))
+        .toInt();
   }
 }
