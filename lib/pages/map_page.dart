@@ -1,7 +1,7 @@
+import '../data/all_parking_locations.dart';
+
 import 'dart:async';
-import 'dart:ffi';
 import 'dart:math';
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -13,72 +13,14 @@ class MapSample extends StatefulWidget {
   State<MapSample> createState() => MapSampleState();
 }
 
-enum DecalType {
-  gold,
-  silver,
-  official,
-  orange,
-  disabledEmployee,
-  disabledStudent,
-  blue,
-  green,
-  medResident,
-  shandsSouth,
-  staffCommuter,
-  carpool,
-  motorcycleScooter,
-  parkAndRide,
-  red1,
-  red3,
-  brown2,
-  brown3
-}
-
-class ParkingLocation {
-  LatLng location;
-  TimeOfDay restrictionStart;
-  TimeOfDay restrictionEnd;
-  Set<String> restrictedDays;
-  Set<DecalType> requiredDecals;
-
-
-  ParkingLocation(
-      this.location,
-      this.restrictionStart,
-      this.restrictionEnd,
-      this.restrictedDays,
-      this.requiredDecals
-  );
-}
-
-Set<String> weekdays = <String>{"Monday", "Tuesday", "Wednesday", "Thursday", "Friday"};
-Set<String> weekends = <String>{"Saturday", "Sunday"};
-
 class MapSampleState extends State<MapSample> {
   final Completer<GoogleMapController> _controller = Completer();
 
   Map<MarkerId, Marker> mapMarkers = <MarkerId, Marker>{};
   MarkerId? selectedMarker;
 
-  static final Map<String, ParkingLocation> _locationPositions = {
-    "University of Florida": ParkingLocation(const LatLng(29.64378349411012, -82.35473240870209), const TimeOfDay(hour:8, minute: 30), const TimeOfDay(hour:15, minute: 30), weekdays, <DecalType>{DecalType.gold}),
-    "Parking Garage 1": ParkingLocation(const LatLng(29.641149556075867, -82.34199262916447), const TimeOfDay(hour:8, minute: 30), const TimeOfDay(hour:15, minute: 30), weekdays, <DecalType>{DecalType.gold}),
-    "Parking Garage 2": ParkingLocation(const LatLng(29.639044308094146, -82.3466793003293), const TimeOfDay(hour:8, minute: 30), const TimeOfDay(hour:15, minute: 30), weekdays, <DecalType>{DecalType.gold}),
-    "Parking Garage 3": ParkingLocation(const LatLng(29.638855333837878, -82.34770275799971), const TimeOfDay(hour:8, minute: 30), const TimeOfDay(hour:15, minute: 30), weekdays, <DecalType>{DecalType.gold}),
-    "Parking Garage 4": ParkingLocation(const LatLng(29.645481407606056, -82.34265756011877), const TimeOfDay(hour:8, minute: 30), const TimeOfDay(hour:15, minute: 30), weekdays, <DecalType>{DecalType.gold}),
-    "Parking Garage 5": ParkingLocation(const LatLng(29.643377553276224, -82.35127111567834), const TimeOfDay(hour:8, minute: 30), const TimeOfDay(hour:15, minute: 30), weekdays, <DecalType>{DecalType.gold}),
-    "Parking Garage 7": ParkingLocation(const LatLng(29.65083713340108, -82.3514484291643), const TimeOfDay(hour:8, minute: 30), const TimeOfDay(hour:15, minute: 30), weekdays, <DecalType>{DecalType.gold}),
-    "Parking Garage 8": ParkingLocation(const LatLng(29.645654973226762, -82.3373295408125), const TimeOfDay(hour:8, minute: 30), const TimeOfDay(hour:15, minute: 30), weekdays, <DecalType>{DecalType.gold}),
-    "Parking Garage 9": ParkingLocation(const LatLng(29.636633711889722, -82.34906774450533), const TimeOfDay(hour:8, minute: 30), const TimeOfDay(hour:15, minute: 30), weekdays, <DecalType>{DecalType.gold}),
-    "Parking Garage 10": ParkingLocation(const LatLng(29.64077880536279, -82.34159892916448), const TimeOfDay(hour:8, minute: 30), const TimeOfDay(hour:15, minute: 30), weekdays, <DecalType>{DecalType.gold}),
-    "Parking Garage 11": ParkingLocation(const LatLng(29.636563339729435, -82.36840412916462), const TimeOfDay(hour:8, minute: 30), const TimeOfDay(hour:15, minute: 30), weekdays, <DecalType>{DecalType.gold}),
-    "Parking Garage 12": ParkingLocation(const LatLng(29.645454, -82.348519), const TimeOfDay(hour:8, minute: 30), const TimeOfDay(hour:15, minute: 30), weekdays, <DecalType>{DecalType.gold}),
-    "Parking Garage 13": ParkingLocation(const LatLng(29.640635006238675, -82.34961670032926), const TimeOfDay(hour:8, minute: 30), const TimeOfDay(hour:15, minute: 30), weekdays, <DecalType>{DecalType.gold}),
-    "Parking Garage 14": ParkingLocation(const LatLng(29.642131205385176, -82.35130385565841), const TimeOfDay(hour:8, minute: 30), const TimeOfDay(hour:15, minute: 30), weekdays, <DecalType>{DecalType.gold}),
-  };
-
-  static LatLng _userPosition = _locationPositions["University of Florida"]!.location;
-  static LatLng _targetPosition = _locationPositions["University of Florida"]!.location;
+  static LatLng _userPosition = allParkingLocations["University of Florida"]!.location;
+  static LatLng _targetPosition = allParkingLocations["University of Florida"]!.location;
 
   static CameraPosition _kUserPosition = CameraPosition(
     target: _userPosition,
@@ -147,7 +89,7 @@ class MapSampleState extends State<MapSample> {
             BitmapDescriptor.hueGreen,
           ),
         );
-        _targetPosition = _locationPositions[markerId.value]!.location;
+        _targetPosition = allParkingLocations[markerId.value]!.location;
         mapMarkers[markerId] = newMarker;
       });
     }
@@ -155,7 +97,7 @@ class MapSampleState extends State<MapSample> {
 
   void _addMarkers() {
     setState(() {
-      _locationPositions.forEach((name, parkingLocation) {
+      allParkingLocations.forEach((name, parkingLocation) {
         MarkerId markerId = MarkerId(name);
         Marker marker = Marker(
           markerId: markerId,
@@ -185,7 +127,7 @@ class MapSampleState extends State<MapSample> {
     final GoogleMapController controller = await _controller.future;
     await _getUserLocation().then((value) => setState(() {
         int minDistance = 0x7fffffffffffffff; //int max
-        _locationPositions.forEach((name, parkingLocation) {
+        allParkingLocations.forEach((name, parkingLocation) {
           int distanceFromUser = haversineDistance(_userPosition, parkingLocation.location);
           if(distanceFromUser < minDistance){
             minDistance = distanceFromUser;
