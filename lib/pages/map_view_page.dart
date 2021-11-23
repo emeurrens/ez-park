@@ -1,3 +1,6 @@
+import 'package:ez_park/classes/parking_location.dart';
+import 'package:ez_park/classes/filtered_parking_locations.dart';
+
 import '../data/all_parking_locations.dart';
 
 import 'dart:async';
@@ -19,8 +22,8 @@ class MapSampleState extends State<MapSample> {
   Map<MarkerId, Marker> mapMarkers = <MarkerId, Marker>{};
   MarkerId? selectedMarker;
 
-  static LatLng _userPosition = allParkingLocations["UF Bookstore & Welcome Center"]!.location;
-  static LatLng _targetPosition = allParkingLocations["UF Bookstore & Welcome Center"]!.location;
+  static LatLng _userPosition = defaultParkingLocation.location;
+  static LatLng _targetPosition = defaultParkingLocation.location;
 
   static CameraPosition _kUserPosition = CameraPosition(
     target: _userPosition,
@@ -75,7 +78,11 @@ class MapSampleState extends State<MapSample> {
 
   void _onMarkerTapped(MarkerId markerId) {
     final Marker? tappedMarker = mapMarkers[markerId];
-    if (tappedMarker != null) {
+    _setSelectedMarker(tappedMarker);
+  }
+
+  void _setSelectedMarker(Marker? tappedMarker){
+    if(tappedMarker != null) {
       setState(() {
         final MarkerId? previousMarkerId = selectedMarker;
         if (previousMarkerId != null && mapMarkers.containsKey(previousMarkerId)) {
@@ -83,21 +90,21 @@ class MapSampleState extends State<MapSample> {
               .copyWith(iconParam: BitmapDescriptor.defaultMarker);
           mapMarkers[previousMarkerId] = resetOld;
         }
-        selectedMarker = markerId;
+        selectedMarker = tappedMarker.markerId;
         final Marker newMarker = tappedMarker.copyWith(
           iconParam: BitmapDescriptor.defaultMarkerWithHue(
             BitmapDescriptor.hueGreen,
           ),
         );
-        _targetPosition = allParkingLocations[markerId.value]!.location;
-        mapMarkers[markerId] = newMarker;
+        _targetPosition = currentParkingLocations.filteredParkingLocations[tappedMarker.markerId.value]!.location;
+        mapMarkers[tappedMarker.markerId] = newMarker;
       });
     }
   }
 
   void _addMarkers() {
     setState(() {
-      allParkingLocations.forEach((name, parkingLocation) {
+      currentParkingLocations.filteredParkingLocations.forEach((name, parkingLocation) {
         MarkerId markerId = MarkerId(name);
         Marker marker = Marker(
           markerId: markerId,
@@ -127,13 +134,16 @@ class MapSampleState extends State<MapSample> {
     final GoogleMapController controller = await _controller.future;
     await _getUserLocation().then((value) => setState(() {
         int minDistance = 0x7fffffffffffffff; //int max
-        allParkingLocations.forEach((name, parkingLocation) {
+        ParkingLocation closestLocation = defaultParkingLocation;
+        currentParkingLocations.filteredParkingLocations.forEach((name, parkingLocation) {
           int distanceFromUser = haversineDistance(_userPosition, parkingLocation.location);
           if(distanceFromUser < minDistance){
             minDistance = distanceFromUser;
-            _setTargetLocation(parkingLocation.location);
+            closestLocation = parkingLocation;
           }
         });
+        _setTargetLocation(closestLocation.location);
+        _setSelectedMarker(mapMarkers[MarkerId(closestLocation.name)]);
         _goToTargetLocation();
     }));
 

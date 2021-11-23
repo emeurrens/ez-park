@@ -43,39 +43,44 @@ enum TimeRestrictions {
   allDay
 }
 
-const Set<String> weekdays = <String>{
-  "Monday",
-  "Tuesday",
-  "Wednesday",
-  "Thursday",
-  "Friday"
+//Corresponds to weekday number from DateTime.weekday
+const Set<int> weekdays = <int>{
+  1, //monday
+  2, //tuesday
+  3, //wednesday
+  4, //thursday
+  5 //friday
 };
 
-const Set<String> weekends = <String>{
-  "Saturday",
-  "Sunday"
+const Set<int> weekends = <int>{
+  6, //saturday
+  7 //sunday
 };
 
 class ParkingLocation {
+  late String name;
   late LatLng location;
   late TimeOfDay restrictionStart;
   late TimeOfDay restrictionEnd;
-  late Set<String> restrictedDays;
+  late Set<int> restrictedDays;
   late Set<DecalType> requiredDecals;
   late int maxCapacity;
   late int currentOccupancy = 0;
 
 
-  ParkingLocation(this.location,
+  ParkingLocation(this.name,
+      this.location,
       this.restrictionStart,
       this.restrictionEnd,
       this.restrictedDays,
       this.requiredDecals,
       this.maxCapacity);
 
-  ParkingLocation.usingEnums(LatLng loc, TimeRestrictions timeRestrictions,
+  ParkingLocation.usingEnums(String locName, LatLng loc, TimeRestrictions timeRestrictions,
       DayRestrictions dayRestrictions, Set<DecalType> reqDecals, LotSize lotSize){
+    name = locName;
     location = loc;
+    requiredDecals = reqDecals;
 
     if(timeRestrictions == TimeRestrictions.allDay) {
       restrictionStart = const TimeOfDay(hour: 0, minute: 0);
@@ -95,7 +100,7 @@ class ParkingLocation {
     } else if (dayRestrictions == DayRestrictions.weekdays) {
       restrictedDays = weekdays;
     } else {
-      restrictedDays = <String>{};
+      restrictedDays = <int>{};
     }
 
     if (lotSize == LotSize.large) {

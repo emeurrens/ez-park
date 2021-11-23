@@ -1,6 +1,6 @@
-import 'map_page.dart';
+import 'map_view_page.dart';
 import 'filter_page.dart';
-import 'garage_list_page.dart';
+import 'list_view_page.dart';
 import 'package:flutter/material.dart';
 
 void main() => runApp(MyApp());
@@ -23,9 +23,9 @@ class MainPage extends StatefulWidget {
 class MainPageState extends State<MainPage> {
   int _selectedIndex = 0;
   final List<Widget> screens = [
-    MapSample(), 
+    MapSample(),
+    ListViewPage(),
     FilterPage(),
-    GarageListPage()
   ];
 
   @override
@@ -47,15 +47,15 @@ class MainPageState extends State<MainPage> {
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.map_outlined),
-            label: 'Map',
+            label: 'Map View',
+          ),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.list),
+              label: 'List View'
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.filter_alt),
             label: 'Filters',
-          ),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.garage),
-              label: 'Garages'
           ),
         ],
         currentIndex: _selectedIndex,

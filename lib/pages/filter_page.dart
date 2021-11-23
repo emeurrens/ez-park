@@ -1,3 +1,5 @@
+import 'package:ez_park/classes/filtered_parking_locations.dart';
+import 'package:ez_park/classes/parking_location.dart';
 import 'package:flutter/material.dart';
 import 'package:multiselect_formfield/multiselect_formfield.dart';
 
@@ -7,40 +9,29 @@ class FilterPage extends StatefulWidget {
 }
 
 class FilterPageState extends State<FilterPage> {
-  List _decals = [];
+  Set<DecalType> _decals = currentParkingLocations.decalQuery;
   final formKey = GlobalKey<FormState>();
-  String _results = "";
-  DateTime selectedDate = DateTime.now();
-  double _sliderValue = 0;
-  String? selectedTime;
+  DateTime _selectedDate = currentParkingLocations.dateQuery;
+  double _sliderValue = currentParkingLocations.remainingProportionMin * 100;
+  TimeOfDay _selectedTime = currentParkingLocations.timeQuery;
 
-  @override
-  void initState() {
-    super.initState();
-    _decals = [];
-    _results = "";
-    selectedDate = DateTime.now();
-  }
-
-  _saveForm() {
-    var form = formKey.currentState;
-    if (form!.validate()) {
-      form.save();
-      setState(() {
-        _results = _decals.toString();
-      });
-    }
+  _applyFilters() {
+    currentParkingLocations.decalQuery = _decals;
+    currentParkingLocations.timeQuery = _selectedTime;
+    currentParkingLocations.dateQuery = _selectedDate;
+    currentParkingLocations.remainingProportionMin = _sliderValue / 100.0;
+    currentParkingLocations.applyFilters();
   }
 
   _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
         context: context,
-        initialDate: selectedDate,
+        initialDate: _selectedDate,
         firstDate: DateTime(2000),
         lastDate: DateTime(2025));
-    if (picked != null && picked != selectedDate) {
+    if (picked != null && picked != _selectedDate) {
       setState(() {
-        selectedDate = picked;
+        _selectedDate = picked;
       });
     }
   }
@@ -49,7 +40,7 @@ class FilterPageState extends State<FilterPage> {
     final TimeOfDay? result = await showTimePicker(context: context, initialTime: TimeOfDay.now());
     if (result != null) {
       setState(() {
-        selectedTime = result.format(context);
+        _selectedTime = result;
       });
     }
   }
@@ -57,7 +48,7 @@ class FilterPageState extends State<FilterPage> {
   @override
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(
-      title: Text("Filters"),
+      title: const Text("Filters"),
     ),
     backgroundColor: Colors.grey[300],
     body: Center(
@@ -67,17 +58,28 @@ class FilterPageState extends State<FilterPage> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             Container(
-              padding: EdgeInsets.all(16),
+              padding: const EdgeInsets.all(16),
               child: MultiSelectFormField(
                 autovalidate: false,
-                title: Text("Decals"),
+                title: const Text("Decals"),
                 dataSource: const [
-                  {"display": "Red", "value": "Red"},
-                  {"display": "Orange", "value": "Orange"},
-                  {"display": "Green", "value": "Green"},
-                  {"display": "Park & Ride", "value": "Park & Ride"},
-                  {"display": "Motorcycle/Scooter", "value": "Motorcycle/Scooter"},
-                  {"display": "Brown", "value": "Brown"},
+                  {"display": "Blue", "value": DecalType.blue},
+                  {"display": "Brown 2", "value": DecalType.brown2},
+                  {"display": "Brown 3", "value": DecalType.brown3},
+                  {"display": "Gold", "value": DecalType.gold},
+                  {"display": "Green", "value": DecalType.green},
+                  {"display": "Medical Resident", "value": DecalType.medResident},
+                  {"display": "Motorcycle/Scooter", "value": DecalType.motorcycleScooter},
+                  {"display": "Orange", "value": DecalType.orange},
+                  {"display": "Park & Ride", "value": DecalType.parkAndRide},
+                  {"display": "Red 1", "value": DecalType.red1},
+                  {"display": "Red 3", "value": DecalType.red3},
+                  {"display": "Shands South", "value": DecalType.shandsSouth},
+                  {"display": "Silver", "value": DecalType.silver},
+                  {"display": "Staff Commuter", "value": DecalType.staffCommuter},
+                  {"display": "Visitor", "value": DecalType.visitor},
+                  {"display": "Disabled Employee", "value": DecalType.disabledEmployee},
+                  {"display": "Disabled Student", "value": DecalType.disabledStudent},
                 ],
                 textField: "display",
                 valueField: "value",
@@ -87,7 +89,10 @@ class FilterPageState extends State<FilterPage> {
                     const Text("Choose the decals to filter by"),
                 onSaved: (value) {
                   setState(() {
-                    _decals = value;
+                    _decals = <DecalType>{};
+                    for(DecalType decal in value){
+                      _decals.add(decal);
+                    }
                   });
                 },
               )
@@ -96,7 +101,7 @@ class FilterPageState extends State<FilterPage> {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 Text(
-                  "${selectedDate.toLocal()}".split(' ')[0],
+                  "${_selectedDate.toLocal()}".split(' ')[0],
                   style: const TextStyle(
                       fontSize: 30, 
                       fontWeight: FontWeight.bold
@@ -120,7 +125,7 @@ class FilterPageState extends State<FilterPage> {
             Container(
               padding: const EdgeInsets.all(8),
               child: Text(
-                selectedTime != null ? selectedTime! : 'Time not selected',
+                _selectedTime.format(context),
                 style: const TextStyle(
                   color: Colors.black,
                   fontSize: 30,
@@ -149,7 +154,7 @@ class FilterPageState extends State<FilterPage> {
                 bottom: 0
               ),
               child: const Text(
-                "Percent Capacity Filled",
+                "Remaining Capacity Proportion",
                 style: TextStyle(
                   fontWeight: FontWeight.bold
                 ),
@@ -167,7 +172,7 @@ class FilterPageState extends State<FilterPage> {
                 min: 0,
                 max: 100,
                 divisions: 10,
-                label: _sliderValue.round().toString(),
+                label: _sliderValue.round().toString() + "%",
                 onChanged: (double value) {
                   setState(() {
                     _sliderValue = value;
@@ -178,13 +183,9 @@ class FilterPageState extends State<FilterPage> {
             Container(
               padding: const EdgeInsets.all(8),
               child: ElevatedButton(
-                child: Text("Apply"),
-                onPressed: _saveForm,
+                child: const Text("Apply"),
+                onPressed: _applyFilters,
               )
-            ),
-            Container(
-              padding: EdgeInsets.all(16),
-              child: Text(_results),
             )
           ],
         )
