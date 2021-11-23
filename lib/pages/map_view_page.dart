@@ -46,6 +46,7 @@ class MapSampleState extends State<MapSample> {
       zoom: 18,
     );
     _getUserLocation();
+    _setSelectedMarker(mapMarkers[MarkerId(currentParkingLocations.selectedParkingLocation.name)]);
   }
 
   void _onItemTapped(int index) {
@@ -67,6 +68,7 @@ class MapSampleState extends State<MapSample> {
           onMapCreated: (GoogleMapController controller) {
             _controller.complete(controller);
             _addMarkers();
+            _setSelectedMarker(mapMarkers[MarkerId(currentParkingLocations.selectedParkingLocation.name)]);
           },
           myLocationEnabled: true,
           markers: Set<Marker>.of(mapMarkers.values)),
@@ -79,6 +81,46 @@ class MapSampleState extends State<MapSample> {
         ),
       ),
     );
+  }
+
+  BitmapDescriptor _getAppropriateMarkerColor(String locationName) {
+    if (locationName == currentParkingLocations.selectedParkingLocation.name) {
+      return BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueCyan);
+    }
+
+    ParkingLocation location = allParkingLocations[locationName]!;
+
+    if (location.requiredDecals.contains(DecalType.parkAndRide)) {
+      return BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueYellow);
+    }
+
+    if (location.requiredDecals.contains(DecalType.red3) ||
+        location.requiredDecals.contains(DecalType.red1)) {
+      return BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed);
+    }
+
+    if (location.requiredDecals.contains(DecalType.brown2) ||
+        location.requiredDecals.contains(DecalType.brown3)) {
+      return BitmapDescriptor.defaultMarkerWithHue(45.0);
+    }
+
+    if (location.requiredDecals.contains(DecalType.green)) {
+      return BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen);
+    }
+
+    if (location.requiredDecals.contains(DecalType.orange)) {
+      return BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange);
+    }
+
+    if (location.requiredDecals.contains(DecalType.blue)) {
+      return BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue);
+    }
+
+    if (location.requiredDecals.contains(DecalType.motorcycleScooter)) {
+      return BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure);
+    }
+
+    return BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueMagenta);
   }
 
   void _onMarkerTapped(MarkerId markerId) {
@@ -97,43 +139,30 @@ class MapSampleState extends State<MapSample> {
         if (previousMarkerId != null &&
             mapMarkers.containsKey(previousMarkerId)) {
           final Marker resetOld = mapMarkers[previousMarkerId]!.copyWith(
-              iconParam: BitmapDescriptor.defaultMarkerWithHue(
-                  _getAppropriateMarkerColor(previousMarkerId.value)));
+              iconParam: _getAppropriateMarkerColor(previousMarkerId.value));
           mapMarkers[previousMarkerId] = resetOld;
         }
         selectedMarker = tappedMarker.markerId;
         final Marker newMarker = tappedMarker.copyWith(
-          iconParam: BitmapDescriptor.defaultMarkerWithHue(
-            BitmapDescriptor.hueGreen,
-          ),
+          iconParam: _getAppropriateMarkerColor(tappedMarker.markerId.value)
         );
-        _targetPosition = currentParkingLocations
-            .filteredParkingLocations[tappedMarker.markerId.value]!.location;
         mapMarkers[tappedMarker.markerId] = newMarker;
       });
     }
   }
 
-  double _getAppropriateMarkerColor(String locationName) {
-    if (locationName == currentParkingLocations.selectedParkingLocation.name) {
-      return BitmapDescriptor.hueGreen;
-    }
-
-    return BitmapDescriptor.hueRed;
-  }
-
   void _addMarkers() {
     setState(() {
-      currentParkingLocations.filteredParkingLocations.forEach((name, parkingLocation) {
+      currentParkingLocations.filteredParkingLocations
+          .forEach((name, parkingLocation) {
         MarkerId markerId = MarkerId(name);
-        String markerSnippet = "Applicable Decals: " + parkingLocation.decalsToString();
+        String markerSnippet =
+            "Applicable Decals: " + parkingLocation.decalsToString();
         Marker marker = Marker(
           markerId: markerId,
           position: parkingLocation.location,
-          infoWindow: InfoWindow(
-              title: name,
-              snippet: markerSnippet
-          ),
+          icon: _getAppropriateMarkerColor(parkingLocation.name),
+          infoWindow: InfoWindow(title: name, snippet: markerSnippet),
           onTap: () {
             _onMarkerTapped(markerId);
           },
