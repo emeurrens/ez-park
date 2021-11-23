@@ -17,7 +17,14 @@ class _ListViewPageState extends State<ListViewPage> {
 
   void _updateList() {
     setState(() {
-      parkingLocationList = [...currentParkingLocations.filteredParkingLocations.keys];
+      parkingLocationList =
+      [...currentParkingLocations.filteredParkingLocations.keys];
+    });
+  }
+
+  void _onTileTapped(int index) {
+    setState(() {
+      currentParkingLocations.selectedParkingLocation = currentParkingLocations.filteredParkingLocations[parkingLocationList[index]]!;
     });
   }
 
@@ -34,6 +41,8 @@ class _ListViewPageState extends State<ListViewPage> {
                 textAlign: TextAlign.center,
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ),
+              tileColor: currentParkingLocations.selectedParkingLocation.name == parkingLocationList[index] ? Colors.greenAccent : Colors.lightBlueAccent,
+              onTap: () => _onTileTapped(index),
             ),
           );
         },
