@@ -24,6 +24,29 @@ enum DecalType {
   none
 }
 
+const Map<DecalType, Set<DecalType>> allApplicableZones = {
+  DecalType.gold: <DecalType>{DecalType.gold, DecalType.orange, DecalType.blue, DecalType.green, DecalType.red1, DecalType.red3, DecalType.brown2, DecalType.brown3, DecalType.parkAndRide},
+  DecalType.silver: <DecalType>{DecalType.silver},
+  DecalType.official: <DecalType>{DecalType.official, DecalType.orange, DecalType.blue, DecalType.green, DecalType.red1, DecalType.red3, DecalType.brown3, DecalType.brown2, DecalType.parkAndRide},
+  DecalType.orange: <DecalType>{DecalType.orange, DecalType.green, DecalType.parkAndRide},
+  DecalType.disabledEmployee: <DecalType>{DecalType.disabledEmployee, DecalType.disabledStudent, DecalType.parkAndRide},
+  DecalType.disabledStudent: <DecalType>{DecalType.disabledStudent, DecalType.disabledEmployee, DecalType.parkAndRide},
+  DecalType.blue: <DecalType>{DecalType.blue, DecalType.green, DecalType.parkAndRide},
+  DecalType.green: <DecalType>{DecalType.green, DecalType.parkAndRide},
+  DecalType.medResident: <DecalType>{DecalType.medResident, DecalType.orange, DecalType.green, DecalType.red1, DecalType.red3, DecalType.brown2, DecalType.brown3, DecalType.parkAndRide},
+  DecalType.shandsSouth: <DecalType>{DecalType.shandsSouth},
+  DecalType.staffCommuter: <DecalType>{DecalType.staffCommuter, DecalType.green},
+  DecalType.carpool: <DecalType>{DecalType.carpool, DecalType.orange, DecalType.blue, DecalType.green, DecalType.parkAndRide},
+  DecalType.motorcycleScooter: <DecalType>{DecalType.motorcycleScooter},
+  DecalType.parkAndRide: <DecalType>{DecalType.parkAndRide},
+  DecalType.red1: <DecalType>{DecalType.red1, DecalType.red3, DecalType.parkAndRide},
+  DecalType.red3: <DecalType>{DecalType.red3},
+  DecalType.brown2: <DecalType>{DecalType.brown2, DecalType.parkAndRide},
+  DecalType.brown3: <DecalType>{DecalType.brown3, DecalType.parkAndRide},
+  DecalType.visitor: <DecalType>{DecalType.visitor},
+  DecalType.none: <DecalType>{},
+};
+
 enum DayRestrictions {
   weekends,
   weekdays,
@@ -166,5 +189,20 @@ class ParkingLocation {
   String restrictedTimesToString() {
     return restrictionStart.hour.toString() + ":" + restrictionStart.minute.toString()
         + " - " + restrictionEnd.hour.toString() + ":" + restrictionEnd.minute.toString();
+  }
+
+  bool validDecal(Set<DecalType> decalSet) {
+    Set<DecalType> possibleMatches = <DecalType>{};
+
+    for(var decal in decalSet) {
+      possibleMatches = possibleMatches.union(allApplicableZones[decal]!);
+    }
+
+    for(var decal in possibleMatches) {
+      if(requiredDecals.contains(decal)) {
+        return true;
+      }
+    }
+    return false;
   }
 }

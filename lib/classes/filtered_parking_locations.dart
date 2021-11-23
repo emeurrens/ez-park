@@ -73,9 +73,7 @@ class FilteredParkingLocations {
         meetsCriteria = false;
       }
 
-      if (_dateTimeQueryIsRestricted(parkingLocation) && decalQuery
-          .intersection(parkingLocation.requiredDecals)
-          .isEmpty) {
+      if (_dateTimeQueryIsRestricted(parkingLocation) && !parkingLocation.validDecal(decalQuery)) {
         meetsCriteria = false;
       }
 
