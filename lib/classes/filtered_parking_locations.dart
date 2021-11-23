@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:ez_park/classes/parking_location.dart';
 import 'package:ez_park/data/all_parking_locations.dart';
 import 'package:flutter/cupertino.dart';
@@ -11,8 +13,10 @@ class FilteredParkingLocations {
   late Set<DecalType> decalQuery;
   late int remainingSpotsMin;
   late double remainingProportionMin;
+  Random random = Random(TimeOfDay.now().hashCode);
 
   late Map<String, ParkingLocation> filteredParkingLocations;
+  late ParkingLocation selectedParkingLocation;
 
   FilteredParkingLocations(this.searchQuery,
       this.timeQuery,
@@ -52,6 +56,9 @@ class FilteredParkingLocations {
     Map<String, ParkingLocation> newMap = {};
 
     allParkingLocations.forEach((name, parkingLocation) {
+      //Randomizes the parking locations current occupancy. AKA generates fake data
+      parkingLocation.currentOccupancy = random.nextInt(parkingLocation.maxCapacity);
+
       bool meetsCriteria = true;
       int remainingSpots = parkingLocation.maxCapacity -
           parkingLocation.currentOccupancy;
@@ -79,6 +86,12 @@ class FilteredParkingLocations {
 
     filteredParkingLocations = newMap;
     filteredParkingLocations[defaultParkingLocation.name] = defaultParkingLocation;
+    selectedParkingLocation = defaultParkingLocation;
+  }
+
+  ParkingLocation selectParkingLocation(String name) {
+    selectedParkingLocation = filteredParkingLocations[name]!;
+    return selectedParkingLocation;
   }
 
 }

@@ -42,16 +42,6 @@ class MapSampleState extends State<MapSample> {
     _getUserLocation();
   }
 
-  void _onItemTapped(int index) {
-    setState(() {
-      //_selectedIndex = index;
-
-      if(index == 1){
-        _launchMapsUrl(_targetPosition);
-      }
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -96,7 +86,7 @@ class MapSampleState extends State<MapSample> {
             BitmapDescriptor.hueGreen,
           ),
         );
-        _targetPosition = currentParkingLocations.filteredParkingLocations[tappedMarker.markerId.value]!.location;
+        _targetPosition = currentParkingLocations.selectParkingLocation(tappedMarker.markerId.value).location;
         mapMarkers[tappedMarker.markerId] = newMarker;
       });
     }
@@ -106,10 +96,14 @@ class MapSampleState extends State<MapSample> {
     setState(() {
       currentParkingLocations.filteredParkingLocations.forEach((name, parkingLocation) {
         MarkerId markerId = MarkerId(name);
+        String markerSnippet = "Applicable Decals: " + parkingLocation.decalsToString();
         Marker marker = Marker(
           markerId: markerId,
           position: parkingLocation.location,
-          infoWindow: InfoWindow(title: name, snippet: '*'),
+          infoWindow: InfoWindow(
+              title: name,
+              snippet: markerSnippet
+          ),
           onTap: () {
             _onMarkerTapped(markerId);
           },
@@ -169,18 +163,6 @@ class MapSampleState extends State<MapSample> {
         zoom: 18,
       );
     });
-  }
-
-  void _launchMapsUrl(LatLng latLng) async {
-    double lat = latLng.latitude;
-    double lng = latLng.longitude;
-
-    final url = 'https://www.google.com/maps/search/?api=1&query=$lat,$lng';
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'Could not launch $url';
-    }
   }
 
   /*
