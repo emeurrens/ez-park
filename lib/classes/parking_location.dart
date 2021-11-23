@@ -20,6 +20,7 @@ enum DecalType {
   red3,
   brown2,
   brown3,
+  visitor,
   none
 }
 

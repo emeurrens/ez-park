@@ -19,8 +19,8 @@ class MapSampleState extends State<MapSample> {
   Map<MarkerId, Marker> mapMarkers = <MarkerId, Marker>{};
   MarkerId? selectedMarker;
 
-  static LatLng _userPosition = allParkingLocations["University of Florida"]!.location;
-  static LatLng _targetPosition = allParkingLocations["University of Florida"]!.location;
+  static LatLng _userPosition = allParkingLocations["UF Bookstore & Welcome Center"]!.location;
+  static LatLng _targetPosition = allParkingLocations["UF Bookstore & Welcome Center"]!.location;
 
   static CameraPosition _kUserPosition = CameraPosition(
     target: _userPosition,
