@@ -112,4 +112,59 @@ class ParkingLocation {
     }
   }
 
+  String decalsToString() {
+    if(requiredDecals.isEmpty){
+      return "None";
+    }
+
+    String decalString = "";
+
+    int decalCount = requiredDecals.length;
+
+    for (var element in requiredDecals) {
+      decalString += element.toString().split('.').last;
+      decalCount -= 1;
+      if(decalCount > 0){
+        decalString += ", ";
+      }
+    }
+
+    return decalString;
+  }
+
+  String restrictedDaysToString() {
+    if(restrictedDays.isEmpty) {
+      return "None";
+    }
+    List orderedDays = [...restrictedDays];
+    orderedDays.sort();
+
+    Map<int, String> dayNameMap = {
+      1: "Mon",
+      2: "Tue",
+      3: "Wed",
+      4: "Thur",
+      5: "Fri",
+      6: "Sat",
+      7: "Sun"
+    };
+
+    String output = "";
+
+    int dayCount = restrictedDays.length;
+    for (var dayNum in orderedDays) {
+      output += dayNameMap[dayNum]!;
+      dayCount -= 0;
+      if(dayCount > 0){
+        output += ", ";
+      }
+    }
+
+    return output;
+  }
+
+  String restrictedTimesToString() {
+    return restrictionStart.hour.toString() + ":" + restrictionStart.minute.toString()
+        + " - " + restrictionEnd.hour.toString() + ":" + restrictionEnd.minute.toString();
+  }
 }

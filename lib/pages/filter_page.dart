@@ -15,7 +15,7 @@ class FilterPageState extends State<FilterPage> {
   double _sliderValue = currentParkingLocations.remainingProportionMin * 100;
   TimeOfDay _selectedTime = currentParkingLocations.timeQuery;
 
-  _applyFilters() {
+  void _applyFilters() {
     currentParkingLocations.decalQuery = _decals;
     currentParkingLocations.timeQuery = _selectedTime;
     currentParkingLocations.dateQuery = _selectedDate;
@@ -103,7 +103,7 @@ class FilterPageState extends State<FilterPage> {
                 Text(
                   "${_selectedDate.toLocal()}".split(' ')[0],
                   style: const TextStyle(
-                      fontSize: 30, 
+                      fontSize: 30,
                       fontWeight: FontWeight.bold
                   ),
                 ),
@@ -115,7 +115,7 @@ class FilterPageState extends State<FilterPage> {
                   child: const Text(
                     "Select Date",
                     style: TextStyle(
-                        color: Colors.black, 
+                        color: Colors.black,
                         fontWeight: FontWeight.bold
                     ),
                   ),
@@ -178,7 +178,7 @@ class FilterPageState extends State<FilterPage> {
                     _sliderValue = value;
                   });
                 },
-              )  
+              )
             ),
             Container(
               padding: const EdgeInsets.all(8),

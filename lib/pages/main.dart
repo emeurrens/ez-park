@@ -1,3 +1,5 @@
+import 'package:ez_park/pages/location_detail_page.dart';
+
 import 'map_view_page.dart';
 import 'filter_page.dart';
 import 'list_view_page.dart';
@@ -26,12 +28,8 @@ class MainPageState extends State<MainPage> {
     MapSample(),
     ListViewPage(),
     FilterPage(),
+    LocationDetailPage()
   ];
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -56,6 +54,10 @@ class MainPageState extends State<MainPage> {
           BottomNavigationBarItem(
             icon: Icon(Icons.filter_alt),
             label: 'Filters',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.manage_search),
+            label: 'Parking Details',
           ),
         ],
         currentIndex: _selectedIndex,
