@@ -11,6 +11,8 @@ class FilterPageState extends State<FilterPage> {
   final formKey = GlobalKey<FormState>();
   String _results = "";
   DateTime selectedDate = DateTime.now();
+  double _sliderValue = 0;
+  String? selectedTime;
 
   @override
   void initState() {
@@ -39,6 +41,15 @@ class FilterPageState extends State<FilterPage> {
     if (picked != null && picked != selectedDate) {
       setState(() {
         selectedDate = picked;
+      });
+    }
+  }
+
+  Future<void> show() async {
+    final TimeOfDay? result = await showTimePicker(context: context, initialTime: TimeOfDay.now());
+    if (result != null) {
+      setState(() {
+        selectedTime = result.format(context);
       });
     }
   }
@@ -87,7 +98,9 @@ class FilterPageState extends State<FilterPage> {
                 Text(
                   "${selectedDate.toLocal()}".split(' ')[0],
                   style: const TextStyle(
-                      fontSize: 55, fontWeight: FontWeight.bold),
+                      fontSize: 30, 
+                      fontWeight: FontWeight.bold
+                  ),
                 ),
                 const SizedBox(
                   height: 20.0,
@@ -105,7 +118,65 @@ class FilterPageState extends State<FilterPage> {
               ],
             ),
             Container(
-              padding: EdgeInsets.all(8),
+              padding: const EdgeInsets.all(8),
+              child: Text(
+                selectedTime != null ? selectedTime! : 'Time not selected',
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontSize: 30,
+                  fontWeight: FontWeight.bold
+                ),
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.all(8),
+              child: ElevatedButton(
+                onPressed: show,
+                child: const Text(
+                  "Select Time",
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold
+                  )
+                ),
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.only(
+                left: 8.0,
+                right: 8.0,
+                top: 32.0,
+                bottom: 0
+              ),
+              child: const Text(
+                "Percent Capacity Filled",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold
+                ),
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.only(
+                left: 8.0,
+                right: 8.0,
+                top: 0,
+                bottom: 8.0
+              ),
+              child: Slider(
+                value: _sliderValue,
+                min: 0,
+                max: 100,
+                divisions: 10,
+                label: _sliderValue.round().toString(),
+                onChanged: (double value) {
+                  setState(() {
+                    _sliderValue = value;
+                  });
+                },
+              )  
+            ),
+            Container(
+              padding: const EdgeInsets.all(8),
               child: ElevatedButton(
                 child: Text("Apply"),
                 onPressed: _saveForm,
