@@ -1,5 +1,6 @@
 import 'map_page.dart';
 import 'filter_page.dart';
+import 'garage_list_page.dart';
 import 'package:flutter/material.dart';
 
 void main() => runApp(MyApp());
@@ -23,7 +24,8 @@ class MainPageState extends State<MainPage> {
   int _selectedIndex = 0;
   final List<Widget> screens = [
     MapSample(), 
-    FilterPage()
+    FilterPage(),
+    GarageListPage()
   ];
 
   @override
@@ -51,9 +53,14 @@ class MainPageState extends State<MainPage> {
             icon: Icon(Icons.filter_alt),
             label: 'Filters',
           ),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.garage),
+              label: 'Garages'
+          ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.purple[800],
+        unselectedItemColor: Colors.blue,
+        selectedItemColor: Colors.deepOrange,
         onTap: _onItemTapped,
       ),
     );
