@@ -1,8 +1,8 @@
 import 'package:ez_park/pages/location_detail_page.dart';
 
-import 'map_view_page.dart';
-import 'filter_page.dart';
-import 'list_view_page.dart';
+import 'pages/map_view_page.dart';
+import 'pages/filter_page.dart';
+import 'pages/list_view_page.dart';
 import 'package:flutter/material.dart';
 
 void main() => runApp(MyApp());
