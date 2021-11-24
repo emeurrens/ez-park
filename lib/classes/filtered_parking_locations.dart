@@ -27,11 +27,11 @@ class FilteredParkingLocations {
       this.filteredParkingLocations);
 
   FilteredParkingLocations.defaultFilters(){
-    _setDefaultFilters();
+    setDefaultFilters();
     applyFilters();
   }
 
-  void _setDefaultFilters() {
+  void setDefaultFilters() {
     searchQuery = "";
     timeQuery = TimeOfDay.now();
     dateQuery = DateTime.now();
@@ -65,7 +65,7 @@ class FilteredParkingLocations {
       double remainingProportion = remainingSpots /
           parkingLocation.maxCapacity.toDouble();
 
-      if (!name.contains(searchQuery)) {
+      if (!name.contains(RegExp(searchQuery, caseSensitive: false))) {
         meetsCriteria = false;
       } else if (remainingSpots < remainingSpotsMin) {
         meetsCriteria = false;
@@ -83,8 +83,13 @@ class FilteredParkingLocations {
     });
 
     filteredParkingLocations = newMap;
-    filteredParkingLocations[defaultParkingLocation.name] = defaultParkingLocation;
-    selectedParkingLocation = defaultParkingLocation;
+
+    if(filteredParkingLocations.isEmpty) {
+      filteredParkingLocations[defaultParkingLocation.name] = defaultParkingLocation;
+      selectedParkingLocation = defaultParkingLocation;
+    } else {
+      selectedParkingLocation = filteredParkingLocations[filteredParkingLocations.keys.first]!;
+    }
   }
 
   ParkingLocation selectParkingLocation(String name) {

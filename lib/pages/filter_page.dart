@@ -9,18 +9,42 @@ class FilterPage extends StatefulWidget {
 }
 
 class FilterPageState extends State<FilterPage> {
-  Set<DecalType> _decals = currentParkingLocations.decalQuery;
   final formKey = GlobalKey<FormState>();
+  Set<DecalType> _decals = currentParkingLocations.decalQuery;
   DateTime _selectedDate = currentParkingLocations.dateQuery;
   double _sliderValue = currentParkingLocations.remainingProportionMin * 100;
   TimeOfDay _selectedTime = currentParkingLocations.timeQuery;
+  String _searchValue = currentParkingLocations.searchQuery;
 
   void _applyFilters() {
+    currentParkingLocations.searchQuery = _searchValue;
     currentParkingLocations.decalQuery = _decals;
     currentParkingLocations.timeQuery = _selectedTime;
     currentParkingLocations.dateQuery = _selectedDate;
     currentParkingLocations.remainingProportionMin = _sliderValue / 100.0;
     currentParkingLocations.applyFilters();
+  }
+
+  void _resetFilters() {
+    currentParkingLocations.setDefaultFilters();
+    currentParkingLocations.applyFilters();
+    _setFiltersFromQuery();
+  }
+
+  void _setFiltersFromQuery() {
+    setState(() {
+      _decals = currentParkingLocations.decalQuery;
+      _selectedDate = currentParkingLocations.dateQuery;
+      _sliderValue = currentParkingLocations.remainingProportionMin * 100;
+      _selectedTime = currentParkingLocations.timeQuery;
+      _searchValue = currentParkingLocations.searchQuery;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _setFiltersFromQuery();
   }
 
   _selectDate(BuildContext context) async {
@@ -57,42 +81,43 @@ class FilterPageState extends State<FilterPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
+            const SizedBox(
+              height: 10.0,
+            ),
+            const Text(
+              "Select Your Decal Type",
+              style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold
+              ),
+            ),
             Container(
               padding: const EdgeInsets.all(16),
-              child: MultiSelectFormField(
-                autovalidate: false,
-                title: const Text("Decals"),
-                dataSource: const [
-                  {"display": "Blue", "value": DecalType.blue},
-                  {"display": "Brown 2", "value": DecalType.brown2},
-                  {"display": "Brown 3", "value": DecalType.brown3},
-                  {"display": "Gold", "value": DecalType.gold},
-                  {"display": "Green", "value": DecalType.green},
-                  {"display": "Medical Resident", "value": DecalType.medResident},
-                  {"display": "Motorcycle/Scooter", "value": DecalType.motorcycleScooter},
-                  {"display": "Orange", "value": DecalType.orange},
-                  {"display": "Park & Ride", "value": DecalType.parkAndRide},
-                  {"display": "Red 1", "value": DecalType.red1},
-                  {"display": "Red 3", "value": DecalType.red3},
-                  {"display": "Shands South", "value": DecalType.shandsSouth},
-                  {"display": "Silver", "value": DecalType.silver},
-                  {"display": "Staff Commuter", "value": DecalType.staffCommuter},
-                  {"display": "Visitor", "value": DecalType.visitor},
-                  {"display": "Disabled Employee", "value": DecalType.disabledEmployee},
-                  {"display": "Disabled Student", "value": DecalType.disabledStudent},
+              child: DropdownButton<DecalType>(
+                value: _decals.isEmpty ? DecalType.none : _decals.first,
+                items: const <DropdownMenuItem<DecalType>> [
+                  DropdownMenuItem<DecalType>(value: DecalType.none, child: Text("None")),
+                  DropdownMenuItem<DecalType>(value: DecalType.blue, child: Text("Blue")),
+                  DropdownMenuItem<DecalType>(value: DecalType.brown2, child: Text("Brown 2")),
+                  DropdownMenuItem<DecalType>(value: DecalType.brown3, child: Text("Brown 3")),
+                  DropdownMenuItem<DecalType>(value: DecalType.gold, child: Text("Gold")),
+                  DropdownMenuItem<DecalType>(value: DecalType.green, child: Text("Green")),
+                  DropdownMenuItem<DecalType>(value: DecalType.medResident, child: Text("Medical Resident")),
+                  DropdownMenuItem<DecalType>(value: DecalType.motorcycleScooter, child: Text("Motorcycle/Scooter")),
+                  DropdownMenuItem<DecalType>(value: DecalType.orange, child: Text("Orange")),
+                  DropdownMenuItem<DecalType>(value: DecalType.parkAndRide, child: Text("Park & Ride")),
+                  DropdownMenuItem<DecalType>(value: DecalType.red1, child: Text("Red 1")),
+                  DropdownMenuItem<DecalType>(value: DecalType.red3, child: Text("Red 3")),
+                  DropdownMenuItem<DecalType>(value: DecalType.shandsSouth, child: Text("Shands South")),
+                  DropdownMenuItem<DecalType>(value: DecalType.silver, child: Text("Silver")),
+                  DropdownMenuItem<DecalType>(value: DecalType.staffCommuter, child: Text("Staff Commuter")),
+                  DropdownMenuItem<DecalType>(value: DecalType.visitor, child: Text("Visitor")),
+                  DropdownMenuItem<DecalType>(value: DecalType.disabledEmployee, child: Text("Disabled Employee")),
+                  DropdownMenuItem<DecalType>(value: DecalType.disabledStudent, child: Text("Disabled Student")),
                 ],
-                textField: "display",
-                valueField: "value",
-                okButtonLabel: "OK",
-                cancelButtonLabel: "CANCEL",
-                hintWidget:
-                    const Text("Choose the decals to filter by"),
-                onSaved: (value) {
+                onChanged: (DecalType? value) {
                   setState(() {
-                    _decals = <DecalType>{};
-                    for(DecalType decal in value){
-                      _decals.add(decal);
-                    }
+                    _decals = <DecalType>{value!};
                   });
                 },
               )
@@ -100,22 +125,38 @@ class FilterPageState extends State<FilterPage> {
             Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                Text(
-                  "${_selectedDate.toLocal()}".split(' ')[0],
-                  style: const TextStyle(
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold
+                const SizedBox(
+                  height: 10.0,
+                ),
+                TextField(
+                  onChanged: (String value) {
+                    _searchValue = value;
+                  },
+                  decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: "Search by Name"
                   ),
                 ),
                 const SizedBox(
-                  height: 20.0,
+                  height: 10.0,
+                ),
+              ],
+            ),
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Text(
+                  "${_selectedDate.toLocal()}".split(' ')[0],
+                  style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold
+                  ),
                 ),
                 ElevatedButton(
                   onPressed: () => _selectDate(context),
                   child: const Text(
                     "Select Date",
                     style: TextStyle(
-                        color: Colors.black,
                         fontWeight: FontWeight.bold
                     ),
                   ),
@@ -128,22 +169,18 @@ class FilterPageState extends State<FilterPage> {
                 _selectedTime.format(context),
                 style: const TextStyle(
                   color: Colors.black,
-                  fontSize: 30,
+                  fontSize: 24,
                   fontWeight: FontWeight.bold
                 ),
               ),
             ),
-            Container(
-              padding: const EdgeInsets.all(8),
-              child: ElevatedButton(
-                onPressed: show,
-                child: const Text(
-                  "Select Time",
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold
-                  )
-                ),
+            ElevatedButton(
+              onPressed: show,
+              child: const Text(
+                "Select Time",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold
+                )
               ),
             ),
             Container(
@@ -160,32 +197,33 @@ class FilterPageState extends State<FilterPage> {
                 ),
               ),
             ),
-            Container(
-              padding: const EdgeInsets.only(
-                left: 8.0,
-                right: 8.0,
-                top: 0,
-                bottom: 8.0
-              ),
-              child: Slider(
-                value: _sliderValue,
-                min: 0,
-                max: 100,
-                divisions: 10,
-                label: _sliderValue.round().toString() + "%",
-                onChanged: (double value) {
-                  setState(() {
-                    _sliderValue = value;
-                  });
-                },
-              )
+            Slider(
+              value: _sliderValue,
+              min: 0,
+              max: 100,
+              divisions: 20,
+              label: "At least " + _sliderValue.round().toString() + "% remaining",
+              onChanged: (double value) {
+                setState(() {
+                  _sliderValue = value;
+                });
+              },
             ),
-            Container(
-              padding: const EdgeInsets.all(8),
-              child: ElevatedButton(
-                child: const Text("Apply"),
-                onPressed: _applyFilters,
-              )
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                ElevatedButton(
+                  child: const Text("Apply"),
+                  onPressed: _applyFilters,
+                ),
+                ElevatedButton(
+                  child: const Text("Reset Filters"),
+                  onPressed: _resetFilters,
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.blueGrey
+                  ),
+                )
+              ]
             )
           ],
         )
