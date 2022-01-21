@@ -39,10 +39,11 @@ class _LocationDetailPageState extends State<LocationDetailPage> {
       body: Center(
             child: ListView(
               children: <Widget>[
+                //Placeholder image
                 //This is where a streetview or simply an image of each parking location would go.
                 const Image(
                   height: 200,
-                  image: NetworkImage('https://snworksceo.imgix.net/ufa/04ff62c8-69c2-4e60-957f-6d46d5ed2555.sized-1000x1000.jpeg?w=1000'),
+                  image: NetworkImage('https://upload.wikimedia.org/wikipedia/en/thumb/1/14/Florida_Gators_gator_logo.svg/1200px-Florida_Gators_gator_logo.svg.png'),
                 ),
                 const Text(
                   "Name",
@@ -104,23 +105,23 @@ class _LocationDetailPageState extends State<LocationDetailPage> {
                       fontWeight: FontWeight.normal
                   ),
                 ),
-                const Text(
-                  "Remaining Capacity",
-                  style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      decoration: TextDecoration.underline
-                  ),
-                ),
-                Text(
-                  (currentParkingLocations.selectedParkingLocation.maxCapacity -
-                      currentParkingLocations.selectedParkingLocation.currentOccupancy).toString()
-                  + "/" + currentParkingLocations.selectedParkingLocation.maxCapacity.toString(),
-                  style: const TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.normal
-                  ),
-                ),
+                // const Text(
+                //   "Remaining Capacity",
+                //   style: TextStyle(
+                //       fontSize: 24,
+                //       fontWeight: FontWeight.bold,
+                //       decoration: TextDecoration.underline
+                //   ),
+                // ),
+                // Text(
+                //   (currentParkingLocations.selectedParkingLocation.maxCapacity -
+                //       currentParkingLocations.selectedParkingLocation.currentOccupancy).toString()
+                //   + "/" + currentParkingLocations.selectedParkingLocation.maxCapacity.toString(),
+                //   style: const TextStyle(
+                //       fontSize: 24,
+                //       fontWeight: FontWeight.normal
+                //   ),
+                // ),
                 Container(
                     padding: const EdgeInsets.all(8),
                     child: ElevatedButton(

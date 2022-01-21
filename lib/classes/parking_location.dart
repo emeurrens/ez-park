@@ -24,6 +24,12 @@ enum DecalType {
   none
 }
 
+enum VehicleType {
+  any,
+  car,
+  scooter
+}
+
 const Map<DecalType, Set<DecalType>> allApplicableZones = {
   DecalType.gold: <DecalType>{DecalType.gold, DecalType.orange, DecalType.blue, DecalType.green, DecalType.red1, DecalType.red3, DecalType.brown2, DecalType.brown3, DecalType.parkAndRide},
   DecalType.silver: <DecalType>{DecalType.silver},
@@ -175,6 +181,10 @@ class ParkingLocation {
     String output = "";
 
     int dayCount = restrictedDays.length;
+    if(dayCount == 7){
+      return "Every day";
+    }
+
     for (var dayNum in orderedDays) {
       output += dayNameMap[dayNum]!;
       dayCount -= 0;
@@ -187,8 +197,18 @@ class ParkingLocation {
   }
 
   String restrictedTimesToString() {
-    return restrictionStart.hour.toString() + ":" + restrictionStart.minute.toString()
-        + " - " + restrictionEnd.hour.toString() + ":" + restrictionEnd.minute.toString();
+    if(restrictionStart == const TimeOfDay(hour: 0, minute:0) &&
+        restrictionEnd == const TimeOfDay(hour: 23, minute: 59)){
+      return "All day";
+    }
+
+    String ampmStart = (restrictionStart.hour / 12 >= 1 ? "pm" : "am");
+    String ampmEnd = (restrictionEnd.hour / 12 >= 1 ? "pm" : "am");
+
+    return (restrictionStart.hour % 12).toString() + ":" +
+        restrictionStart.minute.toString() + ampmStart +
+        " - " + (restrictionEnd.hour % 12).toString() + ":" +
+        restrictionEnd.minute.toString() + ampmEnd;
   }
 
   bool validDecal(Set<DecalType> decalSet) {
@@ -204,5 +224,20 @@ class ParkingLocation {
       }
     }
     return false;
+  }
+
+  bool validVehicleType(VehicleType vehicleTypeQuery) {
+    if(vehicleTypeQuery == VehicleType.car &&
+        requiredDecals.contains(DecalType.motorcycleScooter) &&
+        requiredDecals.length == 1){
+      return false;
+    }
+
+    if(vehicleTypeQuery == VehicleType.scooter &&
+        !requiredDecals.contains(DecalType.motorcycleScooter)){
+      return false;
+    }
+
+    return true;
   }
 }

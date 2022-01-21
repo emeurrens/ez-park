@@ -1,4 +1,4 @@
-package com.example.ez_park
+package com.ezparkuf
 
 import io.flutter.embedding.android.FlutterActivity
 

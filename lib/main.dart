@@ -56,7 +56,7 @@ class MainPageState extends State<MainPage> {
             label: 'Filters',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.manage_search),
+            icon: Icon(Icons.local_parking),
             label: 'Parking Details',
           ),
         ],

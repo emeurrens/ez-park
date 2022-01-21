@@ -1,7 +1,6 @@
 import 'package:ez_park/classes/filtered_parking_locations.dart';
 import 'package:ez_park/classes/parking_location.dart';
 import 'package:flutter/material.dart';
-import 'package:multiselect_formfield/multiselect_formfield.dart';
 
 class FilterPage extends StatefulWidget {
   @override
@@ -11,6 +10,7 @@ class FilterPage extends StatefulWidget {
 class FilterPageState extends State<FilterPage> {
   final formKey = GlobalKey<FormState>();
   Set<DecalType> _decals = currentParkingLocations.decalQuery;
+  VehicleType _vehicleType = currentParkingLocations.vehicleTypeQuery;
   DateTime _selectedDate = currentParkingLocations.dateQuery;
   double _sliderValue = currentParkingLocations.remainingProportionMin * 100;
   TimeOfDay _selectedTime = currentParkingLocations.timeQuery;
@@ -19,6 +19,7 @@ class FilterPageState extends State<FilterPage> {
   void _applyFilters() {
     currentParkingLocations.searchQuery = _searchValue;
     currentParkingLocations.decalQuery = _decals;
+    currentParkingLocations.vehicleTypeQuery = _vehicleType;
     currentParkingLocations.timeQuery = _selectedTime;
     currentParkingLocations.dateQuery = _selectedDate;
     currentParkingLocations.remainingProportionMin = _sliderValue / 100.0;
@@ -34,6 +35,7 @@ class FilterPageState extends State<FilterPage> {
   void _setFiltersFromQuery() {
     setState(() {
       _decals = currentParkingLocations.decalQuery;
+      _vehicleType = currentParkingLocations.vehicleTypeQuery;
       _selectedDate = currentParkingLocations.dateQuery;
       _sliderValue = currentParkingLocations.remainingProportionMin * 100;
       _selectedTime = currentParkingLocations.timeQuery;
@@ -122,6 +124,32 @@ class FilterPageState extends State<FilterPage> {
                 },
               )
             ),
+            const SizedBox(
+              height: 10.0,
+            ),
+            const Text(
+              "Select Your Vehicle Type",
+              style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.all(16),
+              child: DropdownButton<VehicleType>(
+                value: _vehicleType,
+                items: const <DropdownMenuItem<VehicleType>> [
+                  DropdownMenuItem<VehicleType>(value: VehicleType.any, child: Text("Any")),
+                  DropdownMenuItem<VehicleType>(value: VehicleType.car, child: Text("Car")),
+                  DropdownMenuItem<VehicleType>(value: VehicleType.scooter, child: Text("Scooter/Motorcycle")),
+                ],
+                onChanged: (VehicleType? value) {
+                  setState(() {
+                    _vehicleType = value!;
+                  });
+                },
+              )
+            ),
             Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
@@ -183,32 +211,32 @@ class FilterPageState extends State<FilterPage> {
                 )
               ),
             ),
-            Container(
-              padding: const EdgeInsets.only(
-                left: 8.0,
-                right: 8.0,
-                top: 32.0,
-                bottom: 0
-              ),
-              child: const Text(
-                "Remaining Capacity Proportion",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold
-                ),
-              ),
-            ),
-            Slider(
-              value: _sliderValue,
-              min: 0,
-              max: 100,
-              divisions: 20,
-              label: "At least " + _sliderValue.round().toString() + "% remaining",
-              onChanged: (double value) {
-                setState(() {
-                  _sliderValue = value;
-                });
-              },
-            ),
+            // Container(
+            //   padding: const EdgeInsets.only(
+            //     left: 8.0,
+            //     right: 8.0,
+            //     top: 32.0,
+            //     bottom: 0
+            //   ),
+            //   child: const Text(
+            //     "Remaining Capacity Proportion",
+            //     style: TextStyle(
+            //       fontWeight: FontWeight.bold
+            //     ),
+            //   ),
+            // ),
+            // Slider(
+            //   value: _sliderValue,
+            //   min: 0,
+            //   max: 100,
+            //   divisions: 20,
+            //   label: "At least " + _sliderValue.round().toString() + "% remaining",
+            //   onChanged: (double value) {
+            //     setState(() {
+            //       _sliderValue = value;
+            //     });
+            //   },
+            // ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[

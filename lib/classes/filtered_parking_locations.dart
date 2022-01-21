@@ -11,6 +11,7 @@ class FilteredParkingLocations {
   late TimeOfDay timeQuery;
   late DateTime dateQuery;
   late Set<DecalType> decalQuery;
+  late VehicleType vehicleTypeQuery;
   late int remainingSpotsMin;
   late double remainingProportionMin;
   Random random = Random(TimeOfDay.now().hashCode);
@@ -22,6 +23,7 @@ class FilteredParkingLocations {
       this.timeQuery,
       this.dateQuery,
       this.decalQuery,
+      this.vehicleTypeQuery,
       this.remainingSpotsMin,
       this.remainingProportionMin,
       this.filteredParkingLocations);
@@ -36,6 +38,7 @@ class FilteredParkingLocations {
     timeQuery = TimeOfDay.now();
     dateQuery = DateTime.now();
     decalQuery = {};
+    vehicleTypeQuery = VehicleType.any;
     remainingSpotsMin = 0;
     remainingProportionMin = 0.0;
   }
@@ -74,6 +77,10 @@ class FilteredParkingLocations {
       }
 
       if (_dateTimeQueryIsRestricted(parkingLocation) && !parkingLocation.validDecal(decalQuery)) {
+        meetsCriteria = false;
+      }
+
+      if(!parkingLocation.validVehicleType(vehicleTypeQuery)) {
         meetsCriteria = false;
       }
 
