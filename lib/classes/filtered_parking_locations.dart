@@ -59,20 +59,8 @@ class FilteredParkingLocations {
     Map<String, ParkingLocation> newMap = {};
 
     allParkingLocations.forEach((name, parkingLocation) {
-      //Randomizes the parking locations current occupancy. AKA generates fake data
-      parkingLocation.currentOccupancy = random.nextInt(parkingLocation.maxCapacity);
-
       bool meetsCriteria = true;
-      int remainingSpots = parkingLocation.maxCapacity -
-          parkingLocation.currentOccupancy;
-      double remainingProportion = remainingSpots /
-          parkingLocation.maxCapacity.toDouble();
-
       if (!name.contains(RegExp(searchQuery, caseSensitive: false))) {
-        meetsCriteria = false;
-      } else if (remainingSpots < remainingSpotsMin) {
-        meetsCriteria = false;
-      } else if (remainingProportion < remainingProportionMin) {
         meetsCriteria = false;
       }
 

@@ -19,8 +19,10 @@ class _LocationDetailPageState extends State<LocationDetailPage> {
   }
 
   void _launchMapsUrl() async {
-    double lat = currentParkingLocations.selectedParkingLocation.location.latitude;
-    double lng = currentParkingLocations.selectedParkingLocation.location.longitude;
+    double lat =
+        currentParkingLocations.selectedParkingLocation.location.latitude;
+    double lng =
+        currentParkingLocations.selectedParkingLocation.location.longitude;
 
     final url = 'https://www.google.com/maps/search/?api=1&query=$lat,$lng';
     if (await canLaunch(url)) {
@@ -37,102 +39,110 @@ class _LocationDetailPageState extends State<LocationDetailPage> {
       ),
       backgroundColor: Colors.grey[300],
       body: Center(
-            child: ListView(
-              children: <Widget>[
-                //Placeholder image
-                //This is where a streetview or simply an image of each parking location would go.
-                const Image(
-                  height: 200,
-                  image: NetworkImage('https://upload.wikimedia.org/wikipedia/en/thumb/1/14/Florida_Gators_gator_logo.svg/1200px-Florida_Gators_gator_logo.svg.png'),
-                ),
-                const Text(
-                  "Name",
-                  style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      decoration: TextDecoration.underline
-                  ),
-                ),
-                Text(
-                  currentParkingLocations.selectedParkingLocation.name,
-                  style: const TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.normal
-                  ),
-                ),
-                const Text(
-                  "Applicable Decals",
-                  style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      decoration: TextDecoration.underline
-                  ),
-                ),
-                Text(
-                  currentParkingLocations.selectedParkingLocation.decalsToString(),
-                  style: const TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.normal
-                  ),
-                ),
-                const Text(
-                  "Restricted Days",
-                  style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      decoration: TextDecoration.underline
-                  ),
-                ),
-                Text(
-                  currentParkingLocations.selectedParkingLocation.restrictedDaysToString(),
-                  style: const TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.normal
-                  ),
-                ),
-                const Text(
-                  "Restricted Times",
-                  style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      decoration: TextDecoration.underline
-                  ),
-                ),
-                Text(
-                  currentParkingLocations.selectedParkingLocation.restrictedTimesToString(),
-                  style: const TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.normal
-                  ),
-                ),
-                // const Text(
-                //   "Remaining Capacity",
-                //   style: TextStyle(
-                //       fontSize: 24,
-                //       fontWeight: FontWeight.bold,
-                //       decoration: TextDecoration.underline
-                //   ),
-                // ),
-                // Text(
-                //   (currentParkingLocations.selectedParkingLocation.maxCapacity -
-                //       currentParkingLocations.selectedParkingLocation.currentOccupancy).toString()
-                //   + "/" + currentParkingLocations.selectedParkingLocation.maxCapacity.toString(),
-                //   style: const TextStyle(
-                //       fontSize: 24,
-                //       fontWeight: FontWeight.normal
-                //   ),
-                // ),
-                Container(
-                    padding: const EdgeInsets.all(8),
-                    child: ElevatedButton(
-                      child: const Text("Open in Google Maps"),
-                      onPressed: _launchMapsUrl,
-                    )
-                )
-              ],
-            )
-          )
-  );
-
-
+          child: ListView(
+        children: <Widget>[
+          //Placeholder image
+          //This is where a streetview or simply an image of each parking location would go.
+          const Image(
+            height: 100,
+            image: NetworkImage(
+                'https://upload.wikimedia.org/wikipedia/en/thumb/1/14/Florida_Gators_gator_logo.svg/1200px-Florida_Gators_gator_logo.svg.png'),
+          ),
+          const Text(
+            "Name",
+            style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                decoration: TextDecoration.underline),
+          ),
+          Text(
+            currentParkingLocations.selectedParkingLocation.name,
+            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.normal),
+          ),
+          const Text(
+            "Applicable Decals",
+            style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                decoration: TextDecoration.underline),
+          ),
+          Text(
+            currentParkingLocations.selectedParkingLocation.decalsToString(),
+            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.normal),
+          ),
+          const Text(
+            "Restricted Days",
+            style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                decoration: TextDecoration.underline),
+          ),
+          Text(
+            currentParkingLocations.selectedParkingLocation
+                .restrictedDaysToString(),
+            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.normal),
+          ),
+          Row(
+            children: [
+              const Text(
+                "Restricted Times",
+                style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    decoration: TextDecoration.underline),
+              ),
+              currentParkingLocations.selectedParkingLocation.isVerified
+                  ? (const Icon(Icons.check_circle,
+                      color: Colors.green, size: 24))
+                  : (const Icon(Icons.cancel_outlined,
+                      color: Colors.redAccent, size: 24)),
+              currentParkingLocations.selectedParkingLocation.isVerified
+                  ? (const Text(
+                      "Verified",
+                      style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.normal,
+                          fontStyle: FontStyle.italic,
+                          color: Colors.green),
+                    ))
+                  : (const Text(
+                      "Not yet verified",
+                      style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.normal,
+                          fontStyle: FontStyle.italic,
+                          color: Colors.redAccent),
+                    ))
+            ],
+          ),
+          Text(
+            currentParkingLocations.selectedParkingLocation
+                .restrictedTimesToString(),
+            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.normal),
+          ),
+          // const Text(
+          //   "Remaining Capacity",
+          //   style: TextStyle(
+          //       fontSize: 24,
+          //       fontWeight: FontWeight.bold,
+          //       decoration: TextDecoration.underline
+          //   ),
+          // ),
+          // Text(
+          //   (currentParkingLocations.selectedParkingLocation.maxCapacity -
+          //       currentParkingLocations.selectedParkingLocation.currentOccupancy).toString()
+          //   + "/" + currentParkingLocations.selectedParkingLocation.maxCapacity.toString(),
+          //   style: const TextStyle(
+          //       fontSize: 24,
+          //       fontWeight: FontWeight.normal
+          //   ),
+          // ),
+          Container(
+              padding: const EdgeInsets.all(8),
+              child: ElevatedButton(
+                child: const Text("Open in Google Maps"),
+                onPressed: _launchMapsUrl,
+              ))
+        ],
+      )));
 }
