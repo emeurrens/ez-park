@@ -205,7 +205,7 @@ class ParkingLocation {
     retVal += specialNotes;
 
     if (retVal.isEmpty) {
-      return "No special notes";
+      return "No special restrictions";
     }
 
     return retVal;
@@ -221,7 +221,9 @@ class ParkingLocation {
     int decalCount = requiredDecals.length;
 
     for (var element in requiredDecals) {
-      decalString += element.toString().split('.').last;
+      String elementName = element.toString().split('.').last;
+      elementName = elementName[0].toUpperCase() + elementName.substring(1);
+      decalString += elementName;
       decalCount -= 1;
       if (decalCount > 0) {
         decalString += ", ";
@@ -257,7 +259,7 @@ class ParkingLocation {
 
     for (var dayNum in orderedDays) {
       output += dayNameMap[dayNum]!;
-      dayCount -= 0;
+      dayCount -= 1;
       if (dayCount > 0) {
         output += ", ";
       }
@@ -284,6 +286,16 @@ class ParkingLocation {
         ":" +
         restrictionEnd.minute.toString() +
         ampmEnd;
+  }
+
+  String lotSizeToString() {
+    if(sizeOfLot == LotSize.large) {
+      return "Large";
+    } else if(sizeOfLot == LotSize.medium) {
+      return "Medium";
+    } else {
+      return "Small";
+    }
   }
 
   bool validDecal(Set<DecalType> decalSet) {
