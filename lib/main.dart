@@ -47,10 +47,7 @@ class MainPageState extends State<MainPage> {
             icon: Icon(Icons.map_outlined),
             label: 'Map View',
           ),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.list),
-              label: 'List View'
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.list), label: 'List View'),
           BottomNavigationBarItem(
             icon: Icon(Icons.filter_alt),
             label: 'Filters',

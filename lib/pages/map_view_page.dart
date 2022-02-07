@@ -46,7 +46,8 @@ class MapSampleState extends State<MapSample> {
       zoom: 18,
     );
     _getUserLocation();
-    _setSelectedMarker(mapMarkers[MarkerId(currentParkingLocations.selectedParkingLocation.name)]);
+    _setSelectedMarker(mapMarkers[
+        MarkerId(currentParkingLocations.selectedParkingLocation.name)]);
   }
 
   void _onItemTapped(int index) {
@@ -68,7 +69,8 @@ class MapSampleState extends State<MapSample> {
           onMapCreated: (GoogleMapController controller) {
             _controller.complete(controller);
             _addMarkers();
-            _setSelectedMarker(mapMarkers[MarkerId(currentParkingLocations.selectedParkingLocation.name)]);
+            _setSelectedMarker(mapMarkers[MarkerId(
+                currentParkingLocations.selectedParkingLocation.name)]);
           },
           myLocationEnabled: true,
           markers: Set<Marker>.of(mapMarkers.values)),
@@ -144,8 +146,7 @@ class MapSampleState extends State<MapSample> {
         }
         selectedMarker = tappedMarker.markerId;
         final Marker newMarker = tappedMarker.copyWith(
-          iconParam: _getAppropriateMarkerColor(tappedMarker.markerId.value)
-        );
+            iconParam: _getAppropriateMarkerColor(tappedMarker.markerId.value));
         mapMarkers[tappedMarker.markerId] = newMarker;
       });
     }
@@ -162,7 +163,9 @@ class MapSampleState extends State<MapSample> {
           markerId: markerId,
           position: parkingLocation.location,
           icon: _getAppropriateMarkerColor(parkingLocation.name),
-          infoWindow: InfoWindow(title: name, snippet: markerSnippet),
+          infoWindow: InfoWindow(
+              title: name + (parkingLocation.isVerified ? " ✓" : ""),
+              snippet: markerSnippet),
           onTap: () {
             _onMarkerTapped(markerId);
           },
