@@ -1027,7 +1027,7 @@ Map<String, ParkingLocation> allParkingLocations = {
         DecalType.disabledEmployee,
         DecalType.visitor
       },
-      LotSize.large,
+      LotSize.medium,
       notes: "Payment required 7:30am-4:30pm",
       verified: true),
   "Sweetwater Drive Motorcycle": ParkingLocation.usingEnums(

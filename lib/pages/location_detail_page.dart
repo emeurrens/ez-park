@@ -110,18 +110,23 @@ class _LocationDetailPageState extends State<LocationDetailPage> {
                               fontSize: 24, fontWeight: FontWeight.normal),
                           textAlign: TextAlign.center,
                         ),
-                        const Text(
-                          "Lot Size",
-                          style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                              decoration: TextDecoration.underline),
-                        ),
-                        Text(
-                          currentParkingLocations.selectedParkingLocation
-                              .lotSizeToString(),
-                          style: const TextStyle(
-                              fontSize: 24, fontWeight: FontWeight.normal),
+                        Row (
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text(
+                              "Lot Size",
+                              style: TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                  decoration: TextDecoration.underline),
+                            ),
+                            Text(
+                              ": " + currentParkingLocations.selectedParkingLocation
+                                  .lotSizeToString(),
+                              style: const TextStyle(
+                                  fontSize: 24, fontWeight: FontWeight.normal),
+                            ),
+                          ],
                         ),
                         Container(
                             padding: const EdgeInsets.all(8),
