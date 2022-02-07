@@ -31,7 +31,6 @@ class _LocationDetailPageState extends State<LocationDetailPage> {
       body: LayoutBuilder(
           builder: (context, constraints) => ListView(children: [
                 Container(
-                    padding: const EdgeInsets.all(20.0),
                     constraints: BoxConstraints(
                       minHeight: constraints.maxHeight,
                     ),
@@ -39,7 +38,7 @@ class _LocationDetailPageState extends State<LocationDetailPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const Image(
-                          height: 100,
+                          height: 150,
                           image: NetworkImage(
                               'https://upload.wikimedia.org/wikipedia/en/thumb/1/14/Florida_Gators_gator_logo.svg/1200px-Florida_Gators_gator_logo.svg.png'),
                         ),
