@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:maps_launcher/maps_launcher.dart';
 
 class LocationDetailPage extends StatefulWidget {
+  const LocationDetailPage({Key? key}) : super(key: key);
+
   @override
   _LocationDetailPageState createState() => _LocationDetailPageState();
 }

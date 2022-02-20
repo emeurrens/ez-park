@@ -5,12 +5,14 @@ import 'pages/filter_page.dart';
 import 'pages/list_view_page.dart';
 import 'package:flutter/material.dart';
 
-void main() => runApp(MyApp());
+void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       title: 'EZ Park',
       home: MainPage(),
     );
@@ -18,6 +20,8 @@ class MyApp extends StatelessWidget {
 }
 
 class MainPage extends StatefulWidget {
+  const MainPage({Key? key}) : super(key: key);
+
   @override
   State<MainPage> createState() => MainPageState();
 }
@@ -25,10 +29,10 @@ class MainPage extends StatefulWidget {
 class MainPageState extends State<MainPage> {
   int _selectedIndex = 0;
   final List<Widget> screens = [
-    MapSample(),
-    ListViewPage(),
-    FilterPage(),
-    LocationDetailPage()
+    const MapSample(),
+    const ListViewPage(),
+    const FilterPage(),
+    const LocationDetailPage()
   ];
 
   void _onItemTapped(int index) {
@@ -37,6 +41,7 @@ class MainPageState extends State<MainPage> {
     });
   }
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: screens[_selectedIndex],

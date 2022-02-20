@@ -11,7 +11,7 @@ enum DecalType {
   blue,
   green,
   medResident,
-  shandsSouth,
+  shandsYellow,
   staffCommuter,
   carpool,
   motorcycleScooter,
@@ -36,9 +36,13 @@ const Map<DecalType, Set<DecalType>> allApplicableZones = {
     DecalType.red3,
     DecalType.brown2,
     DecalType.brown3,
-    DecalType.parkAndRide
+    DecalType.parkAndRide,
+    DecalType.none
   },
-  DecalType.silver: <DecalType>{DecalType.silver},
+  DecalType.silver: <DecalType>{
+    DecalType.silver,
+    DecalType.none
+  },
   DecalType.official: <DecalType>{
     DecalType.official,
     DecalType.orange,
@@ -48,29 +52,38 @@ const Map<DecalType, Set<DecalType>> allApplicableZones = {
     DecalType.red3,
     DecalType.brown3,
     DecalType.brown2,
-    DecalType.parkAndRide
+    DecalType.parkAndRide,
+    DecalType.none
   },
   DecalType.orange: <DecalType>{
     DecalType.orange,
     DecalType.green,
-    DecalType.parkAndRide
+    DecalType.parkAndRide,
+    DecalType.none
   },
   DecalType.disabledEmployee: <DecalType>{
     DecalType.disabledEmployee,
     DecalType.disabledStudent,
-    DecalType.parkAndRide
+    DecalType.parkAndRide,
+    DecalType.none
   },
   DecalType.disabledStudent: <DecalType>{
     DecalType.disabledStudent,
     DecalType.disabledEmployee,
-    DecalType.parkAndRide
+    DecalType.parkAndRide,
+    DecalType.none
   },
   DecalType.blue: <DecalType>{
     DecalType.blue,
     DecalType.green,
-    DecalType.parkAndRide
+    DecalType.parkAndRide,
+    DecalType.none
   },
-  DecalType.green: <DecalType>{DecalType.green, DecalType.parkAndRide},
+  DecalType.green: <DecalType>{
+    DecalType.green,
+    DecalType.parkAndRide,
+    DecalType.none
+  },
   DecalType.medResident: <DecalType>{
     DecalType.medResident,
     DecalType.orange,
@@ -79,31 +92,56 @@ const Map<DecalType, Set<DecalType>> allApplicableZones = {
     DecalType.red3,
     DecalType.brown2,
     DecalType.brown3,
-    DecalType.parkAndRide
+    DecalType.parkAndRide,
+    DecalType.none
   },
-  DecalType.shandsSouth: <DecalType>{DecalType.shandsSouth},
+  DecalType.shandsYellow: <DecalType>{
+    DecalType.shandsYellow,
+    DecalType.none
+  },
   DecalType.staffCommuter: <DecalType>{
     DecalType.staffCommuter,
-    DecalType.green
+    DecalType.green,
+    DecalType.none
   },
   DecalType.carpool: <DecalType>{
     DecalType.carpool,
     DecalType.orange,
     DecalType.blue,
     DecalType.green,
-    DecalType.parkAndRide
+    DecalType.parkAndRide,
+    DecalType.none
   },
   DecalType.motorcycleScooter: <DecalType>{DecalType.motorcycleScooter},
-  DecalType.parkAndRide: <DecalType>{DecalType.parkAndRide},
+  DecalType.parkAndRide: <DecalType>{
+    DecalType.parkAndRide,
+    DecalType.none
+  },
   DecalType.red1: <DecalType>{
     DecalType.red1,
     DecalType.red3,
-    DecalType.parkAndRide
+    DecalType.parkAndRide,
+    DecalType.none
   },
-  DecalType.red3: <DecalType>{DecalType.red3},
-  DecalType.brown2: <DecalType>{DecalType.brown2, DecalType.parkAndRide},
-  DecalType.brown3: <DecalType>{DecalType.brown3, DecalType.parkAndRide},
-  DecalType.visitor: <DecalType>{DecalType.visitor},
+  DecalType.red3: <DecalType>{
+    DecalType.red3,
+    DecalType.parkAndRide,
+    DecalType.none
+  },
+  DecalType.brown2: <DecalType>{
+    DecalType.brown2,
+    DecalType.parkAndRide,
+    DecalType.none
+  },
+  DecalType.brown3: <DecalType>{
+    DecalType.brown3,
+    DecalType.parkAndRide,
+    DecalType.none
+  },
+  DecalType.visitor: <DecalType>{
+    DecalType.visitor,
+    DecalType.none
+  },
   DecalType.none: <DecalType>{},
 };
 
@@ -115,7 +153,7 @@ enum LotSize { large, medium, small }
 /// Mid: 7:30am-4:30pm
 /// Extended: 7:30am-5:30pm
 /// All Day: 12am-11:59pm
-enum TimeRestrictions { standard, mid, extended, allDay }
+enum TimeRestrictions { standard, mid, extended, allDay, none }
 
 //Corresponds to weekday number from DateTime.weekday
 const Set<int> weekdays = <int>{
@@ -144,13 +182,8 @@ class ParkingLocation {
   late bool isVerified = false;
   late LotSize sizeOfLot;
 
-  ParkingLocation(
-      this.name,
-      this.location,
-      this.restrictionStart,
-      this.restrictionEnd,
-      this.restrictedDays,
-      this.requiredDecals);
+  ParkingLocation(this.name, this.location, this.restrictionStart,
+      this.restrictionEnd, this.restrictedDays, this.requiredDecals);
 
   ParkingLocation.usingEnums(
       String locName,
@@ -179,6 +212,9 @@ class ParkingLocation {
     } else if (timeRestrictions == TimeRestrictions.mid) {
       restrictionStart = const TimeOfDay(hour: 7, minute: 30);
       restrictionEnd = const TimeOfDay(hour: 16, minute: 30);
+    } else if (timeRestrictions == TimeRestrictions.none) {
+      restrictionStart = const TimeOfDay(hour: 0, minute: 0);
+      restrictionEnd = const TimeOfDay(hour: 0, minute: 0);
     } else {
       restrictionStart = const TimeOfDay(hour: 8, minute: 30);
       restrictionEnd = const TimeOfDay(hour: 15, minute: 30);
@@ -273,6 +309,10 @@ class ParkingLocation {
         restrictionEnd == const TimeOfDay(hour: 23, minute: 59)) {
       return "All day";
     }
+    if (restrictionStart == const TimeOfDay(hour: 0, minute: 0) &&
+        restrictionEnd == const TimeOfDay(hour: 0, minute: 0)) {
+      return "No restricted times";
+    }
 
     String ampmStart = (restrictionStart.hour / 12 >= 1 ? "pm" : "am");
     String ampmEnd = (restrictionEnd.hour / 12 >= 1 ? "pm" : "am");
@@ -289,9 +329,9 @@ class ParkingLocation {
   }
 
   String lotSizeToString() {
-    if(sizeOfLot == LotSize.large) {
+    if (sizeOfLot == LotSize.large) {
       return "Large";
-    } else if(sizeOfLot == LotSize.medium) {
+    } else if (sizeOfLot == LotSize.medium) {
       return "Medium";
     } else {
       return "Small";

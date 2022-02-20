@@ -2,9 +2,7 @@ import 'dart:math';
 
 import 'package:ez_park/classes/parking_location.dart';
 import 'package:ez_park/data/all_parking_locations.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class FilteredParkingLocations {
   late String searchQuery;

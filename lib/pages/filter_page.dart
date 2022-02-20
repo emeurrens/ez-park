@@ -3,6 +3,8 @@ import 'package:ez_park/classes/parking_location.dart';
 import 'package:flutter/material.dart';
 
 class FilterPage extends StatefulWidget {
+  const FilterPage({Key? key}) : super(key: key);
+
   @override
   State<FilterPage> createState() => FilterPageState();
 }
@@ -124,8 +126,8 @@ class FilterPageState extends State<FilterPage> {
                           DropdownMenuItem<DecalType>(
                               value: DecalType.red3, child: Text("Red 3")),
                           DropdownMenuItem<DecalType>(
-                              value: DecalType.shandsSouth,
-                              child: Text("Shands South")),
+                              value: DecalType.shandsYellow,
+                              child: Text("Shands Yellow")),
                           DropdownMenuItem<DecalType>(
                               value: DecalType.silver, child: Text("Silver")),
                           DropdownMenuItem<DecalType>(
@@ -183,7 +185,7 @@ class FilterPageState extends State<FilterPage> {
                           _searchValue = value;
                         },
                         decoration: const InputDecoration(
-                          prefixIcon: Icon(Icons.search),
+                            prefixIcon: Icon(Icons.search),
                             border: OutlineInputBorder(),
                             labelText: "Search by Name"),
                       ),

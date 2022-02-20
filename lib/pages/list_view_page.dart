@@ -2,6 +2,8 @@ import 'package:ez_park/classes/filtered_parking_locations.dart';
 import 'package:flutter/material.dart';
 
 class ListViewPage extends StatefulWidget {
+  const ListViewPage({Key? key}) : super(key: key);
+
   @override
   _ListViewPageState createState() => _ListViewPageState();
 }

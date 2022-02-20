@@ -9,9 +9,10 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class MapSample extends StatefulWidget {
+  const MapSample({Key? key}) : super(key: key);
+
   @override
   State<MapSample> createState() => MapSampleState();
 }
@@ -48,16 +49,6 @@ class MapSampleState extends State<MapSample> {
     _getUserLocation();
     _setSelectedMarker(mapMarkers[
         MarkerId(currentParkingLocations.selectedParkingLocation.name)]);
-  }
-
-  void _onItemTapped(int index) {
-    setState(() {
-      //_selectedIndex = index;
-
-      if (index == 1) {
-        _launchMapsUrl(_targetPosition);
-      }
-    });
   }
 
   @override
@@ -180,12 +171,6 @@ class MapSampleState extends State<MapSample> {
     controller.animateCamera(CameraUpdate.newCameraPosition(_kTargetPosition));
   }
 
-  //it looks like the gmaps api has this included already, will keep for now.
-  Future<void> _goToUser() async {
-    final GoogleMapController controller = await _controller.future;
-    controller.animateCamera(CameraUpdate.newCameraPosition(_kUserPosition));
-  }
-
   Future<void> _findClosestParking() async {
     final GoogleMapController controller = await _controller.future;
     await _getUserLocation().then((value) => setState(() {
@@ -230,30 +215,13 @@ class MapSampleState extends State<MapSample> {
     });
   }
 
-  void _launchMapsUrl(LatLng latLng) async {
-    double lat = latLng.latitude;
-    double lng = latLng.longitude;
-
-    final url = 'https://www.google.com/maps/search/?api=1&query=$lat,$lng';
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'Could not launch $url';
-    }
-  }
-
-  /*
-  Approximate distance between two latitude/longitude points on a sphere
-  https://en.wikipedia.org/wiki/Haversine_formula
-
-  R = earth's radius = 6371000m
-   */
+  //https://en.wikipedia.org/wiki/Haversine_formula
   int haversineDistance(LatLng point1, LatLng point2) {
     double phi1 = point1.latitude;
     double phi2 = point2.latitude;
     double lam1 = point1.longitude;
     double lam2 = point2.longitude;
-    int R = 6371000;
+    int R = 6371000; //earth's radius
 
     return (2 *
             R *
