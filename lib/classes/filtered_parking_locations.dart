@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:ez_park/classes/parking_location.dart';
 import 'package:ez_park/data/all_parking_locations.dart';
 import 'package:flutter/material.dart';
@@ -8,11 +6,9 @@ class FilteredParkingLocations {
   late String searchQuery;
   late TimeOfDay timeQuery;
   late DateTime dateQuery;
-  late Set<DecalType> decalQuery;
+  DecalType decalQuery = DecalType.visitor;
   late VehicleType vehicleTypeQuery;
-  late int remainingSpotsMin;
-  late double remainingProportionMin;
-  Random random = Random(TimeOfDay.now().hashCode);
+  bool showAllLocationsQuery = false;
 
   late Map<String, ParkingLocation> filteredParkingLocations;
   late ParkingLocation selectedParkingLocation;
@@ -22,8 +18,6 @@ class FilteredParkingLocations {
       this.dateQuery,
       this.decalQuery,
       this.vehicleTypeQuery,
-      this.remainingSpotsMin,
-      this.remainingProportionMin,
       this.filteredParkingLocations);
 
   FilteredParkingLocations.defaultFilters(){
@@ -35,10 +29,9 @@ class FilteredParkingLocations {
     searchQuery = "";
     timeQuery = TimeOfDay.now();
     dateQuery = DateTime.now();
-    decalQuery = {};
+    decalQuery = DecalType.visitor;
     vehicleTypeQuery = VehicleType.any;
-    remainingSpotsMin = 0;
-    remainingProportionMin = 0.0;
+    showAllLocationsQuery = false;
   }
 
   bool _dateTimeQueryIsRestricted(ParkingLocation parkingLocation) {
@@ -70,7 +63,7 @@ class FilteredParkingLocations {
         meetsCriteria = false;
       }
 
-      if (meetsCriteria) {
+      if (meetsCriteria || showAllLocationsQuery) {
         newMap[name] = parkingLocation;
       }
     });
@@ -81,7 +74,7 @@ class FilteredParkingLocations {
       filteredParkingLocations[defaultParkingLocation.name] = defaultParkingLocation;
       selectedParkingLocation = defaultParkingLocation;
     } else {
-      selectedParkingLocation = filteredParkingLocations[filteredParkingLocations.keys.first]!;
+      selectedParkingLocation = defaultParkingLocation;
     }
   }
 

@@ -20,8 +20,7 @@ enum DecalType {
   red3,
   brown2,
   brown3,
-  visitor,
-  none
+  visitor
 }
 
 enum VehicleType { any, car, scooter }
@@ -37,11 +36,11 @@ const Map<DecalType, Set<DecalType>> allApplicableZones = {
     DecalType.brown2,
     DecalType.brown3,
     DecalType.parkAndRide,
-    DecalType.none
+    DecalType.visitor
   },
   DecalType.silver: <DecalType>{
     DecalType.silver,
-    DecalType.none
+    DecalType.visitor
   },
   DecalType.official: <DecalType>{
     DecalType.official,
@@ -53,36 +52,36 @@ const Map<DecalType, Set<DecalType>> allApplicableZones = {
     DecalType.brown3,
     DecalType.brown2,
     DecalType.parkAndRide,
-    DecalType.none
+    DecalType.visitor
   },
   DecalType.orange: <DecalType>{
     DecalType.orange,
     DecalType.green,
     DecalType.parkAndRide,
-    DecalType.none
+    DecalType.visitor
   },
   DecalType.disabledEmployee: <DecalType>{
     DecalType.disabledEmployee,
     DecalType.disabledStudent,
     DecalType.parkAndRide,
-    DecalType.none
+    DecalType.visitor
   },
   DecalType.disabledStudent: <DecalType>{
     DecalType.disabledStudent,
     DecalType.disabledEmployee,
     DecalType.parkAndRide,
-    DecalType.none
+    DecalType.visitor
   },
   DecalType.blue: <DecalType>{
     DecalType.blue,
     DecalType.green,
     DecalType.parkAndRide,
-    DecalType.none
+    DecalType.visitor
   },
   DecalType.green: <DecalType>{
     DecalType.green,
     DecalType.parkAndRide,
-    DecalType.none
+    DecalType.visitor
   },
   DecalType.medResident: <DecalType>{
     DecalType.medResident,
@@ -93,16 +92,16 @@ const Map<DecalType, Set<DecalType>> allApplicableZones = {
     DecalType.brown2,
     DecalType.brown3,
     DecalType.parkAndRide,
-    DecalType.none
+    DecalType.visitor
   },
   DecalType.shandsYellow: <DecalType>{
     DecalType.shandsYellow,
-    DecalType.none
+    DecalType.visitor
   },
   DecalType.staffCommuter: <DecalType>{
     DecalType.staffCommuter,
     DecalType.green,
-    DecalType.none
+    DecalType.visitor
   },
   DecalType.carpool: <DecalType>{
     DecalType.carpool,
@@ -110,39 +109,37 @@ const Map<DecalType, Set<DecalType>> allApplicableZones = {
     DecalType.blue,
     DecalType.green,
     DecalType.parkAndRide,
-    DecalType.none
+    DecalType.visitor
   },
   DecalType.motorcycleScooter: <DecalType>{DecalType.motorcycleScooter},
   DecalType.parkAndRide: <DecalType>{
     DecalType.parkAndRide,
-    DecalType.none
+    DecalType.visitor
   },
   DecalType.red1: <DecalType>{
     DecalType.red1,
     DecalType.red3,
     DecalType.parkAndRide,
-    DecalType.none
+    DecalType.visitor
   },
   DecalType.red3: <DecalType>{
     DecalType.red3,
     DecalType.parkAndRide,
-    DecalType.none
+    DecalType.visitor
   },
   DecalType.brown2: <DecalType>{
     DecalType.brown2,
     DecalType.parkAndRide,
-    DecalType.none
+    DecalType.visitor
   },
   DecalType.brown3: <DecalType>{
     DecalType.brown3,
     DecalType.parkAndRide,
-    DecalType.none
+    DecalType.visitor
   },
   DecalType.visitor: <DecalType>{
     DecalType.visitor,
-    DecalType.none
-  },
-  DecalType.none: <DecalType>{},
+  }
 };
 
 enum DayRestrictions { weekends, weekdays, all, none }
@@ -338,12 +335,8 @@ class ParkingLocation {
     }
   }
 
-  bool validDecal(Set<DecalType> decalSet) {
-    Set<DecalType> possibleMatches = <DecalType>{};
-
-    for (var decal in decalSet) {
-      possibleMatches = possibleMatches.union(allApplicableZones[decal]!);
-    }
+  bool validDecal(DecalType decalType) {
+    Set<DecalType> possibleMatches = allApplicableZones[decalType]!;
 
     for (var decal in possibleMatches) {
       if (requiredDecals.contains(decal)) {

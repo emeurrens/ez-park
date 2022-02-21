@@ -1,3 +1,4 @@
+import 'package:ez_park/widgets/decal_dropdown_options.dart';
 import 'package:ez_park/classes/filtered_parking_locations.dart';
 import 'package:ez_park/classes/parking_location.dart';
 import 'package:flutter/material.dart';
@@ -11,21 +12,31 @@ class FilterPage extends StatefulWidget {
 
 class FilterPageState extends State<FilterPage> {
   final formKey = GlobalKey<FormState>();
-  Set<DecalType> _decals = currentParkingLocations.decalQuery;
+  DecalType _decalType = currentParkingLocations.decalQuery;
   VehicleType _vehicleType = currentParkingLocations.vehicleTypeQuery;
   DateTime _selectedDate = currentParkingLocations.dateQuery;
-  double _sliderValue = currentParkingLocations.remainingProportionMin * 100;
   TimeOfDay _selectedTime = currentParkingLocations.timeQuery;
   String _searchValue = currentParkingLocations.searchQuery;
+  bool _showAllLocations = currentParkingLocations.showAllLocationsQuery;
+
+  bool _filtersChanged() {
+    return currentParkingLocations.searchQuery != _searchValue ||
+        currentParkingLocations.decalQuery != _decalType ||
+        currentParkingLocations.vehicleTypeQuery != _vehicleType ||
+        currentParkingLocations.timeQuery != _selectedTime ||
+        currentParkingLocations.dateQuery != _selectedDate ||
+        currentParkingLocations.showAllLocationsQuery != _showAllLocations;
+  }
 
   void _applyFilters() {
     currentParkingLocations.searchQuery = _searchValue;
-    currentParkingLocations.decalQuery = _decals;
+    currentParkingLocations.decalQuery = _decalType;
     currentParkingLocations.vehicleTypeQuery = _vehicleType;
     currentParkingLocations.timeQuery = _selectedTime;
     currentParkingLocations.dateQuery = _selectedDate;
-    currentParkingLocations.remainingProportionMin = _sliderValue / 100.0;
+    currentParkingLocations.showAllLocationsQuery = _showAllLocations;
     currentParkingLocations.applyFilters();
+    _setFiltersFromQuery();
   }
 
   void _resetFilters() {
@@ -36,12 +47,12 @@ class FilterPageState extends State<FilterPage> {
 
   void _setFiltersFromQuery() {
     setState(() {
-      _decals = currentParkingLocations.decalQuery;
+      _decalType = currentParkingLocations.decalQuery;
       _vehicleType = currentParkingLocations.vehicleTypeQuery;
       _selectedDate = currentParkingLocations.dateQuery;
-      _sliderValue = currentParkingLocations.remainingProportionMin * 100;
       _selectedTime = currentParkingLocations.timeQuery;
       _searchValue = currentParkingLocations.searchQuery;
+      _showAllLocations = currentParkingLocations.showAllLocationsQuery;
     });
   }
 
@@ -74,6 +85,195 @@ class FilterPageState extends State<FilterPage> {
     }
   }
 
+  Color getColor(Set<MaterialState> states) {
+    const Set<MaterialState> interactiveStates = <MaterialState>{
+      MaterialState.pressed,
+      MaterialState.hovered,
+      MaterialState.focused,
+    };
+    if (states.any(interactiveStates.contains)) {
+      return Colors.blue;
+    }
+    return Colors.red;
+  }
+
+  Widget showAllLocationsCheckbox() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        const Text(
+          "Show ALL Parking Locations",
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+        Checkbox(
+          checkColor: Colors.white,
+          fillColor: MaterialStateProperty.resolveWith(getColor),
+          value: _showAllLocations,
+          onChanged: (bool? newValue) {
+            setState(() {
+              _showAllLocations = newValue!;
+            });
+          }
+        )
+      ],
+    );
+  }
+
+  Widget decalTypeDropdown() {
+    return Column(
+      children: <Widget>[
+        const Text(
+          "Your Decal Type",
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+        Container(
+            padding: const EdgeInsets.all(16),
+            child: DropdownButton<DecalType>(
+              value: _decalType,
+              items: decalDropdownOptions,
+              onChanged: (DecalType? value) {
+                setState(() {
+                  _decalType = value!;
+                });
+              },
+            )),
+      ],
+    );
+  }
+
+  Widget vehicleTypeDropdown() {
+    return Column(
+      children: <Widget>[
+        const Text(
+          "Your Vehicle Type",
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+        Container(
+          padding: const EdgeInsets.all(16),
+          child: DropdownButton<VehicleType>(
+            value: _vehicleType,
+            items: const <DropdownMenuItem<VehicleType>>[
+              DropdownMenuItem<VehicleType>(
+                  value: VehicleType.any, child: Text("Any")),
+              DropdownMenuItem<VehicleType>(
+                  value: VehicleType.car, child: Text("Car")),
+              DropdownMenuItem<VehicleType>(
+                  value: VehicleType.scooter,
+                  child: Text("Scooter/Motorcycle")),
+            ],
+            onChanged: (VehicleType? value) {
+              setState(() {
+                _vehicleType = value!;
+              });
+            },
+        )),
+      ],
+    );
+  }
+
+  Widget searchBarLocationNames() {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        const SizedBox(
+          height: 10.0,
+        ),
+        TextField(
+          onChanged: (String value) {
+            _searchValue = value;
+          },
+          decoration: const InputDecoration(
+              prefixIcon: Icon(Icons.search),
+              border: OutlineInputBorder(),
+              labelText: "Search by Name"),
+        ),
+        const SizedBox(
+          height: 10.0,
+        ),
+      ],
+    );
+  }
+
+  Widget dateSelectionWidget(){
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Container(
+          padding: const EdgeInsets.all(8),
+          child: Text(
+            "${_selectedDate.toLocal()}".split(' ')[0],
+            style: const TextStyle(
+                fontSize: 24, fontWeight: FontWeight.bold),
+          ),
+        ),
+        ElevatedButton(
+          onPressed: () => _selectDate(context),
+          child: const Text(
+            "Select Date",
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+        )
+      ],
+    );
+  }
+
+  Widget timeSelectionWidget() {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          padding: const EdgeInsets.all(8),
+          child: Text(
+            _selectedTime.format(context),
+            style: const TextStyle(
+                color: Colors.black,
+                fontSize: 24,
+                fontWeight: FontWeight.bold),
+          ),
+        ),
+        ElevatedButton(
+          onPressed: show,
+          child: const Text("Select Time",
+              style: TextStyle(fontWeight: FontWeight.bold)),
+        ),
+      ],
+    );
+  }
+
+  Widget timeAndDateSelection() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        dateSelectionWidget(),
+        const SizedBox(width: 30),
+        timeSelectionWidget()
+      ],
+    );
+  }
+
+  Widget showWidget(Widget w) {
+    if(_showAllLocations) {
+      return const Text(
+          "Filters disabled, will show all UF parking locations.",
+          style: TextStyle(fontStyle: FontStyle.italic)
+      );
+    } else {
+      return w;
+    }
+  }
+
+  Widget statusText() {
+    return Text(
+        _filtersChanged() ?
+          "Filters changed. Make sure to apply them!" :
+        "Filters applied. Check out the Map or List view!",
+        style: TextStyle(
+          fontStyle: FontStyle.italic,
+          color: _filtersChanged() ? Colors.red : Colors.green
+        )
+    );
+  }
+
   @override
   Widget build(BuildContext context) => Scaffold(
       appBar: AppBar(
@@ -86,160 +286,15 @@ class FilterPageState extends State<FilterPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
-                  const SizedBox(
-                    height: 10.0,
-                  ),
-                  const Text(
-                    "Select Your Decal Type",
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                  Container(
-                      padding: const EdgeInsets.all(16),
-                      child: DropdownButton<DecalType>(
-                        value: _decals.isEmpty ? DecalType.none : _decals.first,
-                        items: const <DropdownMenuItem<DecalType>>[
-                          DropdownMenuItem<DecalType>(
-                              value: DecalType.none, child: Text("None")),
-                          DropdownMenuItem<DecalType>(
-                              value: DecalType.blue, child: Text("Blue")),
-                          DropdownMenuItem<DecalType>(
-                              value: DecalType.brown2, child: Text("Brown 2")),
-                          DropdownMenuItem<DecalType>(
-                              value: DecalType.brown3, child: Text("Brown 3")),
-                          DropdownMenuItem<DecalType>(
-                              value: DecalType.gold, child: Text("Gold")),
-                          DropdownMenuItem<DecalType>(
-                              value: DecalType.green, child: Text("Green")),
-                          DropdownMenuItem<DecalType>(
-                              value: DecalType.medResident,
-                              child: Text("Medical Resident")),
-                          DropdownMenuItem<DecalType>(
-                              value: DecalType.motorcycleScooter,
-                              child: Text("Motorcycle/Scooter")),
-                          DropdownMenuItem<DecalType>(
-                              value: DecalType.orange, child: Text("Orange")),
-                          DropdownMenuItem<DecalType>(
-                              value: DecalType.parkAndRide,
-                              child: Text("Park & Ride")),
-                          DropdownMenuItem<DecalType>(
-                              value: DecalType.red1, child: Text("Red 1")),
-                          DropdownMenuItem<DecalType>(
-                              value: DecalType.red3, child: Text("Red 3")),
-                          DropdownMenuItem<DecalType>(
-                              value: DecalType.shandsYellow,
-                              child: Text("Shands Yellow")),
-                          DropdownMenuItem<DecalType>(
-                              value: DecalType.silver, child: Text("Silver")),
-                          DropdownMenuItem<DecalType>(
-                              value: DecalType.staffCommuter,
-                              child: Text("Staff Commuter")),
-                          DropdownMenuItem<DecalType>(
-                              value: DecalType.visitor, child: Text("Visitor")),
-                          DropdownMenuItem<DecalType>(
-                              value: DecalType.disabledEmployee,
-                              child: Text("Disabled Employee")),
-                          DropdownMenuItem<DecalType>(
-                              value: DecalType.disabledStudent,
-                              child: Text("Disabled Student")),
-                        ],
-                        onChanged: (DecalType? value) {
-                          setState(() {
-                            _decals = <DecalType>{value!};
-                          });
-                        },
-                      )),
-                  const SizedBox(
-                    height: 10.0,
-                  ),
-                  const Text(
-                    "Select Your Vehicle Type",
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                  Container(
-                      padding: const EdgeInsets.all(16),
-                      child: DropdownButton<VehicleType>(
-                        value: _vehicleType,
-                        items: const <DropdownMenuItem<VehicleType>>[
-                          DropdownMenuItem<VehicleType>(
-                              value: VehicleType.any, child: Text("Any")),
-                          DropdownMenuItem<VehicleType>(
-                              value: VehicleType.car, child: Text("Car")),
-                          DropdownMenuItem<VehicleType>(
-                              value: VehicleType.scooter,
-                              child: Text("Scooter/Motorcycle")),
-                        ],
-                        onChanged: (VehicleType? value) {
-                          setState(() {
-                            _vehicleType = value!;
-                          });
-                        },
-                      )),
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
+                  showAllLocationsCheckbox(),
+                  showWidget(Column(
                     children: <Widget>[
-                      const SizedBox(
-                        height: 10.0,
-                      ),
-                      TextField(
-                        onChanged: (String value) {
-                          _searchValue = value;
-                        },
-                        decoration: const InputDecoration(
-                            prefixIcon: Icon(Icons.search),
-                            border: OutlineInputBorder(),
-                            labelText: "Search by Name"),
-                      ),
-                      const SizedBox(
-                        height: 10.0,
-                      ),
+                      decalTypeDropdown(),
+                      vehicleTypeDropdown(),
+                      searchBarLocationNames(),
+                      timeAndDateSelection(),
                     ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Container(
-                            padding: const EdgeInsets.all(8),
-                            child: Text(
-                              "${_selectedDate.toLocal()}".split(' ')[0],
-                              style: const TextStyle(
-                                  fontSize: 24, fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          ElevatedButton(
-                            onPressed: () => _selectDate(context),
-                            child: const Text(
-                              "Select Date",
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          )
-                        ],
-                      ),
-                      const SizedBox(width: 30),
-                      Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(8),
-                            child: Text(
-                              _selectedTime.format(context),
-                              style: const TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          ElevatedButton(
-                            onPressed: show,
-                            child: const Text("Select Time",
-                                style: TextStyle(fontWeight: FontWeight.bold)),
-                          ),
-                        ],
-                      )
-                    ],
-                  ),
+                  )),
                   const SizedBox(height: 50),
                   Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -247,8 +302,7 @@ class FilterPageState extends State<FilterPage> {
                         ElevatedButton(
                           child: const Text("Apply Filters"),
                           onPressed: _applyFilters,
-                          style:
-                              ElevatedButton.styleFrom(primary: Colors.green),
+                          style: ElevatedButton.styleFrom(primary: Colors.green),
                         ),
                         ElevatedButton(
                           child: const Text("Reset Filters"),
@@ -256,7 +310,9 @@ class FilterPageState extends State<FilterPage> {
                           style: ElevatedButton.styleFrom(
                               primary: Colors.redAccent),
                         )
-                      ])
+                      ]
+                  ),
+                  statusText(),
                 ],
               ))));
 }

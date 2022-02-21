@@ -27,6 +27,7 @@ Map<String, ParkingLocation> allParkingLocations = {
       },
       LotSize.large,
       verified: true,
+      evCharge: true,
       notes: "Gator1 required for entry on East side. "
           "Visitor parking on West side requires voucher or \$10 fee"),
   "Parking Garage 2 - Scooter": ParkingLocation.usingEnums(
@@ -193,7 +194,7 @@ Map<String, ParkingLocation> allParkingLocations = {
       const LatLng(29.638026296775237, -82.34103314793583),
       TimeRestrictions.none,
       DayRestrictions.all,
-      <DecalType>{DecalType.none},
+      <DecalType>{DecalType.visitor},
       LotSize.small,
       verified: true,
       notes:"Max 30 minute parking. Tow away zone."),
@@ -203,7 +204,9 @@ Map<String, ParkingLocation> allParkingLocations = {
       TimeRestrictions.allDay,
       DayRestrictions.all,
       <DecalType>{DecalType.visitor, DecalType.gold, DecalType.silver},
-      LotSize.large),
+      LotSize.large,
+      verified: true,
+      notes:"UFHealth Patient, Visitor, and Employee parking only."),
   "UFHealth Medical Plaza - Disabled": ParkingLocation.usingEnums(
       "UFHealth Medical Plaza - Disabled",
       const LatLng(29.638108229472838, -82.34832817189796),
@@ -765,10 +768,9 @@ Map<String, ParkingLocation> allParkingLocations = {
       "UF Foundation Annexure",
       const LatLng(29.652862968406264, -82.3495416176753),
       TimeRestrictions.allDay,
-      DayRestrictions.weekdays,
-      <DecalType>{DecalType.motorcycleScooter, DecalType.visitor},
-      LotSize.small,
-      verified: true),
+      DayRestrictions.all,
+      <DecalType>{DecalType.motorcycleScooter, DecalType.official},
+      LotSize.medium),
   "Murphree Hall Orange": ParkingLocation.usingEnums(
       "Murphree Hall Orange",
       const LatLng(29.651187991121752, -82.34739097150346),

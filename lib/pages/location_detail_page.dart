@@ -42,7 +42,7 @@ class _LocationDetailPageState extends State<LocationDetailPage> {
                         const Image(
                           height: 150,
                           image: NetworkImage(
-                              'https://upload.wikimedia.org/wikipedia/en/thumb/1/14/Florida_Gators_gator_logo.svg/1200px-Florida_Gators_gator_logo.svg.png'),
+                              'https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Florida_Gators_wordmark.png/640px-Florida_Gators_wordmark.png'),
                         ),
                         Text(
                           currentParkingLocations.selectedParkingLocation.name,

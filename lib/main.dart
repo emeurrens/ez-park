@@ -1,5 +1,6 @@
 import 'package:ez_park/pages/location_detail_page.dart';
 
+import 'widgets/navbar_widgets.dart';
 import 'pages/map_view_page.dart';
 import 'pages/filter_page.dart';
 import 'pages/list_view_page.dart';
@@ -47,20 +48,11 @@ class MainPageState extends State<MainPage> {
       body: screens[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.grey[300],
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.map_outlined),
-            label: 'Map View',
-          ),
-          BottomNavigationBarItem(icon: Icon(Icons.list), label: 'List View'),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.filter_alt),
-            label: 'Filters',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.local_parking),
-            label: 'Parking Details',
-          ),
+        items: <BottomNavigationBarItem>[
+          mapViewPage(),
+          listViewPage(),
+          filterPage(),
+          detailsPage(),
         ],
         currentIndex: _selectedIndex,
         unselectedItemColor: Colors.blue,
