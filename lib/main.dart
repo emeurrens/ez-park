@@ -16,6 +16,7 @@ class MyApp extends StatelessWidget {
     return const MaterialApp(
       title: 'EZ Park',
       home: MainPage(),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
