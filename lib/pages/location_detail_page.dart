@@ -1,6 +1,6 @@
 import 'package:ez_park/classes/filtered_parking_locations.dart';
 import 'package:flutter/material.dart';
-import 'package:maps_launcher/maps_launcher.dart';
+import 'package:map_launcher/map_launcher.dart';
 
 class LocationDetailPage extends StatefulWidget {
   const LocationDetailPage({Key? key}) : super(key: key);
@@ -10,9 +10,16 @@ class LocationDetailPage extends StatefulWidget {
 }
 
 class _LocationDetailPageState extends State<LocationDetailPage> {
+  late List<AvailableMap> availableMaps;
+
   @override
   void initState() {
     super.initState();
+    _loadMapLauncher();
+  }
+
+  void _loadMapLauncher() async {
+    availableMaps = await MapLauncher.installedMaps;
   }
 
   void _launchMapsUrl() async {
@@ -21,7 +28,11 @@ class _LocationDetailPageState extends State<LocationDetailPage> {
     double lng =
         currentParkingLocations.selectedParkingLocation.location.longitude;
 
-    MapsLauncher.launchCoordinates(lat, lng);
+    await availableMaps.first.showDirections(
+      destination: Coords(lat, lng),
+      directionsMode: DirectionsMode.driving,
+      destinationTitle: currentParkingLocations.selectedParkingLocation.name
+    );
   }
 
   @override
