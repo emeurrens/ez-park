@@ -1,6 +1,6 @@
-import 'package:ez_park/widgets/decal_dropdown_options.dart';
 import 'package:ez_park/classes/filtered_parking_locations.dart';
 import 'package:ez_park/classes/parking_location.dart';
+import 'package:ez_park/widgets/decal_dropdown_options.dart';
 import 'package:flutter/material.dart';
 
 class FilterPage extends StatefulWidget {
@@ -106,15 +106,14 @@ class FilterPageState extends State<FilterPage> {
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
         Checkbox(
-          checkColor: Colors.white,
-          fillColor: MaterialStateProperty.resolveWith(getColor),
-          value: _showAllLocations,
-          onChanged: (bool? newValue) {
-            setState(() {
-              _showAllLocations = newValue!;
-            });
-          }
-        )
+            checkColor: Colors.white,
+            fillColor: MaterialStateProperty.resolveWith(getColor),
+            value: _showAllLocations,
+            onChanged: (bool? newValue) {
+              setState(() {
+                _showAllLocations = newValue!;
+              });
+            })
       ],
     );
   }
@@ -123,7 +122,7 @@ class FilterPageState extends State<FilterPage> {
     return Column(
       children: <Widget>[
         const Text(
-          "Your Decal Type",
+          "Your Decal",
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
         Container(
@@ -145,28 +144,28 @@ class FilterPageState extends State<FilterPage> {
     return Column(
       children: <Widget>[
         const Text(
-          "Your Vehicle Type",
+          "Your Vehicle",
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
         Container(
-          padding: const EdgeInsets.all(16),
-          child: DropdownButton<VehicleType>(
-            value: _vehicleType,
-            items: const <DropdownMenuItem<VehicleType>>[
-              DropdownMenuItem<VehicleType>(
-                  value: VehicleType.any, child: Text("Any")),
-              DropdownMenuItem<VehicleType>(
-                  value: VehicleType.car, child: Text("Car")),
-              DropdownMenuItem<VehicleType>(
-                  value: VehicleType.scooter,
-                  child: Text("Scooter/Motorcycle")),
-            ],
-            onChanged: (VehicleType? value) {
-              setState(() {
-                _vehicleType = value!;
-              });
-            },
-        )),
+            padding: const EdgeInsets.all(16),
+            child: DropdownButton<VehicleType>(
+              value: _vehicleType,
+              items: const <DropdownMenuItem<VehicleType>>[
+                DropdownMenuItem<VehicleType>(
+                    value: VehicleType.any, child: Text("Any")),
+                DropdownMenuItem<VehicleType>(
+                    value: VehicleType.car, child: Text("Car")),
+                DropdownMenuItem<VehicleType>(
+                    value: VehicleType.scooter,
+                    child: Text("Scooter")),
+              ],
+              onChanged: (VehicleType? value) {
+                setState(() {
+                  _vehicleType = value!;
+                });
+              },
+            )),
       ],
     );
   }
@@ -194,7 +193,7 @@ class FilterPageState extends State<FilterPage> {
     );
   }
 
-  Widget dateSelectionWidget(){
+  Widget dateSelectionWidget() {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
@@ -202,8 +201,7 @@ class FilterPageState extends State<FilterPage> {
           padding: const EdgeInsets.all(8),
           child: Text(
             "${_selectedDate.toLocal()}".split(' ')[0],
-            style: const TextStyle(
-                fontSize: 24, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
         ),
         ElevatedButton(
@@ -226,9 +224,7 @@ class FilterPageState extends State<FilterPage> {
           child: Text(
             _selectedTime.format(context),
             style: const TextStyle(
-                color: Colors.black,
-                fontSize: 24,
-                fontWeight: FontWeight.bold),
+                color: Colors.black, fontSize: 24, fontWeight: FontWeight.bold),
           ),
         ),
         ElevatedButton(
@@ -252,11 +248,9 @@ class FilterPageState extends State<FilterPage> {
   }
 
   Widget showWidget(Widget w) {
-    if(_showAllLocations) {
-      return const Text(
-          "Filters disabled, will show all UF parking locations.",
-          style: TextStyle(fontStyle: FontStyle.italic)
-      );
+    if (_showAllLocations) {
+      return const Text("Filters disabled, will show all UF parking locations.",
+          style: TextStyle(fontStyle: FontStyle.italic));
     } else {
       return w;
     }
@@ -264,14 +258,12 @@ class FilterPageState extends State<FilterPage> {
 
   Widget statusText() {
     return Text(
-        _filtersChanged() ?
-          "Filters changed. Make sure to apply them!" :
-        "Filters applied. Check out the Map or List view!",
+        _filtersChanged()
+            ? "Filters changed. Make sure to apply them!"
+            : "Filters applied. Check out the Map or List view!",
         style: TextStyle(
-          fontStyle: FontStyle.italic,
-          color: _filtersChanged() ? Colors.red : Colors.green
-        )
-    );
+            fontStyle: FontStyle.italic,
+            color: _filtersChanged() ? Colors.red : Colors.green));
   }
 
   @override
@@ -283,26 +275,34 @@ class FilterPageState extends State<FilterPage> {
       body: Center(
           child: Form(
               key: formKey,
-              child: Column(
+              child: SingleChildScrollView(
+                  child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
                   showAllLocationsCheckbox(),
                   showWidget(Column(
                     children: <Widget>[
-                      decalTypeDropdown(),
-                      vehicleTypeDropdown(),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          decalTypeDropdown(),
+                          vehicleTypeDropdown(),
+
+                        ],
+                      ),
                       searchBarLocationNames(),
                       timeAndDateSelection(),
                     ],
                   )),
-                  const SizedBox(height: 50),
+                  const SizedBox(height: 25),
                   Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: <Widget>[
                         ElevatedButton(
                           child: const Text("Apply Filters"),
                           onPressed: _applyFilters,
-                          style: ElevatedButton.styleFrom(primary: Colors.green),
+                          style:
+                              ElevatedButton.styleFrom(primary: Colors.green),
                         ),
                         ElevatedButton(
                           child: const Text("Reset Filters"),
@@ -310,9 +310,8 @@ class FilterPageState extends State<FilterPage> {
                           style: ElevatedButton.styleFrom(
                               primary: Colors.redAccent),
                         )
-                      ]
-                  ),
+                      ]),
                   statusText(),
                 ],
-              ))));
+              )))));
 }
