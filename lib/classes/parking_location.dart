@@ -20,7 +20,12 @@ enum DecalType {
   red3,
   brown2,
   brown3,
-  visitor
+  visitor;
+
+  @override
+  String toString() {
+    return name;
+  }
 }
 
 enum VehicleType { any, car, scooter }
@@ -153,6 +158,20 @@ enum LotSize { large, medium, small }
 enum TimeRestrictions { standard, mid, extended, allDay, none }
 
 //Corresponds to weekday number from DateTime.weekday
+enum Day {
+  monday(1, 'M'),
+  tuesday(2, 'T'),
+  wednesday(3, 'W'),
+  thursday(4, 'R'),
+  friday(5, 'F'),
+  saturday(6, 'S'),
+  sunday(7, 'U');
+
+  const Day(this.num, this.abbr);
+  final int num;
+  final String abbr;
+}
+
 const Set<int> weekdays = <int>{
   1, //monday
   2, //tuesday
@@ -167,17 +186,20 @@ const Set<int> weekends = <int>{
 };
 
 class ParkingLocation {
+  late String lotID;                  // lot database ID if applicable
   late String name;
   late LatLng location;
   late TimeOfDay restrictionStart;
   late TimeOfDay restrictionEnd;
   late Set<int> restrictedDays;
   late Set<DecalType> requiredDecals;
-  late int currentOccupancy = 0;
+  late int currentOccupancy = -1;     // -1 if PAS not available (IMPORTANT)
   late bool evCharging = false;
   late String specialNotes;
-  late bool isVerified = false;
-  late LotSize sizeOfLot;
+  late bool isVerified = false;       
+  late DateTime dateVerified = DateTime(1901,1,1);
+  late int lotCapacity = -1;          // Capacity of lot as numeric; -1 if database was not accessed
+  late LotSize sizeOfLot;             // Capacity of lot as category
 
   ParkingLocation(this.name, this.location, this.restrictionStart,
       this.restrictionEnd, this.restrictedDays, this.requiredDecals);
@@ -191,7 +213,8 @@ class ParkingLocation {
       LotSize lotSize,
       {bool evCharge = false,
       String notes = "",
-      bool verified = false}) {
+      bool verified = false,
+      DateTime? dateVerified}) {
     name = locName;
     location = loc;
     requiredDecals = reqDecals;
@@ -227,6 +250,51 @@ class ParkingLocation {
       restrictedDays = <int>{};
     }
   }
+
+  ParkingLocation.fromJson(Map<String, dynamic> json) :
+      lotID = json['LotID'] ?? "NO_ID",
+      name = json['name'],
+      location = LatLng(json['latitude'], json['longitude']),
+      restrictionStart = TimeOfDay(hour: int.parse(json['open'].split(':')[0]),
+                                    minute: int.parse(json['open'].split(':')[1])),
+      restrictionEnd = TimeOfDay(hour: int.parse(json['close'].split(':')[0]),
+                                  minute: int.parse(json['close'].split(':')[1])),
+      restrictedDays = json['days'].map((abbr) =>
+                  Day.values.firstWhere((day) => day.abbr == abbr).num).toSet().cast<int>(),
+      requiredDecals = json['decals'].map((name) =>
+                  DecalType.values.firstWhere((type) => type.name == name)).toSet().cast<DecalType>(),
+      currentOccupancy = json['occupancy'],
+      evCharging = json['evCharging'],
+      specialNotes = json['notes'],
+      isVerified = json['verified'] == "1901-01-01" ? false : true,
+      dateVerified = DateTime.parse(json['verified']),
+      lotCapacity = json['capacity'],
+      sizeOfLot = json['capacity'] >= 500 ? LotSize.large :
+                  json['capacity'] >= 100 ? LotSize.medium :
+                  LotSize.small;
+
+  Map<String, dynamic> toJson() => {
+    'latitude':   location.latitude,
+    'longitude':  location.longitude,
+    'name':       name,
+    'address':    "",        // Seriously could get rid of this address column
+    'open':       "${restrictionStart.hour}:${restrictionStart.minute}:00",
+    'close':      "${restrictionEnd.hour}:${restrictionEnd.minute}:00",
+    'days':       restrictedDays.map((i) => Day.values[i-1].abbr).toList(),
+    'decals':     requiredDecals.map((type) => type.toString()).toList(),
+    'occupancy':  currentOccupancy,
+    'capacity':   lotCapacity == -1 ?
+                      (sizeOfLot == LotSize.large ? 500 :
+                      sizeOfLot == LotSize.medium ? 100 :
+                      20)
+                  :
+                      lotCapacity,
+    'evCharging': evCharging,
+    'notes':      specialNotes,
+    'verified':   "${dateVerified.year}-"
+                  "${dateVerified.month.toString().padLeft(2,'0')}-"
+                  "${dateVerified.day.toString().padLeft(2,'0')}"
+  };
 
   String formatNotes() {
     String retVal = "";

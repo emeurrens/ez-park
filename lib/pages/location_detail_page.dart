@@ -1,4 +1,5 @@
 import 'package:ez_park/classes/filtered_parking_locations.dart';
+import 'package:ez_park/widgets/occupancy_gauge.dart';
 import 'package:flutter/material.dart';
 import 'package:map_launcher/map_launcher.dart';
 
@@ -140,6 +141,10 @@ class _LocationDetailPageState extends State<LocationDetailPage> {
                                   fontSize: 24, fontWeight: FontWeight.normal),
                             ),
                           ],
+                        ),
+                        /// TODO: currentParkingLocations.selectedParkingLocation.currentOccupancy == -1 ?
+                        OccupancyGauge(
+                            lotName: currentParkingLocations.selectedParkingLocation.name,
                         ),
                         Container(
                             padding: const EdgeInsets.all(8),

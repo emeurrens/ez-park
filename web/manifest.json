@@ -1,6 +1,6 @@
 {
-    "name": "ez_park",
-    "short_name": "ez_park",
+    "name": "parkings_",
+    "short_name": "parkings_",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

@@ -1,3 +1,5 @@
+/// TODO: Fix bug where all locations don't load
+
 import 'package:ez_park/pages/location_detail_page.dart';
 
 import 'widgets/navbar_widgets.dart';
@@ -5,8 +7,18 @@ import 'pages/map_view_page.dart';
 import 'pages/filter_page.dart';
 import 'pages/list_view_page.dart';
 import 'package:flutter/material.dart';
+import 'data/database_client.dart';
 
-void main() => runApp(const MyApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  /// TODO: move to load during app
+  // Get data from database's lot table
+  DatabaseClient.pollGetLots();
+
+  // Run app
+  runApp(const MyApp());
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
