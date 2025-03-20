@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:ez_park/data/psql_api_wrapper.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:flutter/material.dart';
 import '../classes/parking_location.dart';
 import '../data/all_parking_locations.dart';
+import '../data/lot_database_client.dart';
 
 class OccupancyGauge extends StatefulWidget {
   const OccupancyGauge({

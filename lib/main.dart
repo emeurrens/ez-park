@@ -7,14 +7,14 @@ import 'pages/map_view_page.dart';
 import 'pages/filter_page.dart';
 import 'pages/list_view_page.dart';
 import 'package:flutter/material.dart';
-import 'data/database_client.dart';
+import 'data/lot_database_client.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   /// TODO: move to load during app
   // Get data from database's lot table
-  DatabaseClient.pollGetLots();
+  await DatabaseClient.pollGetLots();
 
   // Run app
   runApp(const MyApp());
