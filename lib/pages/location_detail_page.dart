@@ -143,9 +143,9 @@ class _LocationDetailPageState extends State<LocationDetailPage> {
                           ],
                         ),
                         /// TODO: currentParkingLocations.selectedParkingLocation.currentOccupancy == -1 ?
-                        OccupancyGauge(
-                            lotName: currentParkingLocations.selectedParkingLocation.name,
-                        ),
+                        // OccupancyGauge(
+                        //     lotName: currentParkingLocations.selectedParkingLocation.name,
+                        // ),
                         Container(
                             padding: const EdgeInsets.all(8),
                             child: ElevatedButton(

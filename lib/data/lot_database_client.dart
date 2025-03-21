@@ -65,17 +65,20 @@ class LotDatabaseClient {
       client.close();
     }
 
-    // Add lots to updated list
-    updatedList = jsonDecode(_response.body);
+    // If request was successful (response code == 200), update lot list
+    if (_response.statusCode == 200) {
+      // Add lots to updated list
+      updatedList = jsonDecode(_response.body);
 
-    // Based off of result, assign new data to corresponding lot entry
-    // in allParkingLocations data structure. If there is a new lost, add to
-    // allParkingLocations.
-    for (final lot in updatedList) {
-      allParkingLocations.update(lot['name'],
-              (value) => ParkingLocation.fromJson(lot),
-          ifAbsent: () => ParkingLocation.fromJson(lot)
-      );
+      // Based off of result, assign new data to corresponding lot entry
+      // in allParkingLocations data structure. If there is a new lost, add to
+      // allParkingLocations.
+      for (final lot in updatedList) {
+        allParkingLocations.update(lot['name'],
+                (value) => ParkingLocation.fromJson(lot),
+            ifAbsent: () => ParkingLocation.fromJson(lot)
+        );
+      }
     }
 
     // Return status code

@@ -39,7 +39,7 @@ class _OccupancyGaugeState extends State<OccupancyGauge> {
   void checkOccupancy() async {
     // Update local parking location data according to database information
     print(widget.lotName + " " + allParkingLocations[widget.lotName]!.lotID);
-    Map<String, dynamic> jsonInput = jsonDecode(await getLot(allParkingLocations[widget.lotName]!.lotID) as String);
+    Map<String, dynamic> jsonInput = jsonDecode(await LotDatabaseClient.getLot(allParkingLocations[widget.lotName]!.lotID) as String);
     jsonInput.putIfAbsent("LotID", () => allParkingLocations[widget.lotName]!.lotID);  // Need to add lotID since lotID is not returned with getLot
     print(jsonInput);
 
@@ -49,8 +49,8 @@ class _OccupancyGaugeState extends State<OccupancyGauge> {
 
     setState(() {
       // Update occupancy information for gauge
-      occupancy = allParkingLocations[widget.lotName]!.currentOccupancy;
-      capacity = allParkingLocations[widget.lotName]!.lotCapacity;
+      occupancy = allParkingLocations[widget.lotName]!.occupancy;
+      capacity = allParkingLocations[widget.lotName]!.capacity;
 
       // Update color according to occupancy percentage
       // If occupancy-capacity ratio is [0-0.4), make color green

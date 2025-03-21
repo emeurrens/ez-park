@@ -1,7 +1,4 @@
-/// TODO: Fix bug where all locations don't load
-
 import 'package:ez_park/pages/location_detail_page.dart';
-
 import 'widgets/navbar_widgets.dart';
 import 'pages/map_view_page.dart';
 import 'pages/filter_page.dart';
@@ -9,12 +6,8 @@ import 'pages/list_view_page.dart';
 import 'package:flutter/material.dart';
 import 'data/lot_database_client.dart';
 
-Future<void> main() async {
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
-
-  /// TODO: move to load during app
-  // Get data from database's lot table
-  await DatabaseClient.pollGetLots();
 
   // Run app
   runApp(const MyApp());
@@ -37,10 +30,12 @@ class MainPage extends StatefulWidget {
   const MainPage({Key? key}) : super(key: key);
 
   @override
-  State<MainPage> createState() => MainPageState();
+  State<MainPage> createState() => _MainPageState();
 }
 
-class MainPageState extends State<MainPage> {
+class _MainPageState extends State<MainPage> {
+  final Future<int> _dbLoadStatus = LotDatabaseClient.pollLotsFromDB();
+
   int _selectedIndex = 0;
   final List<Widget> screens = [
     const MapSample(),
@@ -58,7 +53,13 @@ class MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: screens[_selectedIndex],
+      body: FutureBuilder(
+        // Attempt to load data from database
+        future: _dbLoadStatus,
+        builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
+          return screens[_selectedIndex];
+        }
+      ),
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.grey[300],
         items: <BottomNavigationBarItem>[

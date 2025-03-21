@@ -46,6 +46,5 @@ app.*.map.json
 # Exposes Google Maps API information (need to change still)
 android/app/src/main/AndroidManifest.xml
 ios/Runner/AppDelegate.swift
-# DM me for the wrapper function information
-lib/data/psql_api_wrapper.dart
-lib/data/database_client.dart
+# DM me for secrets
+.env
