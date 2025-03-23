@@ -1,25 +1,26 @@
-import 'package:ez_park/pages/location_detail_page.dart';
+import 'package:flutter/material.dart';
 import 'widgets/navbar_widgets.dart';
 import 'pages/map_view_page.dart';
 import 'pages/filter_page.dart';
 import 'pages/list_view_page.dart';
-import 'package:flutter/material.dart';
+import 'pages/location_detail_page.dart';
 import 'data/lot_database_client.dart';
+import 'services/geolocate_service.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Run app
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      title: 'EZ Park',
+      title: 'EZPark UF',
       home: MainPage(),
       debugShowCheckedModeBanner: false,
     );
@@ -55,10 +56,10 @@ class _MainPageState extends State<MainPage> {
     return Scaffold(
       body: FutureBuilder(
         // Attempt to load data from database
-        future: _dbLoadStatus,
-        builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
-          return screens[_selectedIndex];
-        }
+          future: _dbLoadStatus,
+          builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
+            return screens[_selectedIndex];
+          }
       ),
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.grey[300],
