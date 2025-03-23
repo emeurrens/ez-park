@@ -1,6 +1,6 @@
 /// Import SDK libraries and packages
 import "dart:convert";
-import 'package:dotenv/dotenv.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter/material.dart' show TimeOfDay;
 import 'package:http/http.dart' as http;
 import 'package:http/retry.dart';
@@ -17,8 +17,7 @@ import "../classes/parking_location.dart";
 ///
 class LotDatabaseClient {
   /// URL for connection to database
-  static final _env = DotEnv()..load(['../../.env']);
-  static final String _psqlUrl = _env['PSQL_DB_URL']!;
+  static final String _psqlUrl = dotenv.env['PSQL_DB_URL']!;
   /// Most recent http response
   static late http.Response _response;
   /// Returns most recent http response

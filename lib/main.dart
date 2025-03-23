@@ -1,3 +1,4 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter/material.dart';
 import 'widgets/navbar_widgets.dart';
 import 'pages/map_view_page.dart';
@@ -5,10 +6,10 @@ import 'pages/filter_page.dart';
 import 'pages/list_view_page.dart';
 import 'pages/location_detail_page.dart';
 import 'data/lot_database_client.dart';
-import 'services/geolocate_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env");
 
   // Run app
   runApp(MyApp());
@@ -58,7 +59,14 @@ class _MainPageState extends State<MainPage> {
         // Attempt to load data from database
           future: _dbLoadStatus,
           builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
-            return screens[_selectedIndex];
+            if (snapshot.hasData || snapshot.hasError) {
+              return screens[_selectedIndex];
+            }
+            else {
+              return Center(
+                child: CircularProgressIndicator(color: Colors.blue),
+              );
+            }
           }
       ),
       bottomNavigationBar: BottomNavigationBar(

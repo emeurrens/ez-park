@@ -257,7 +257,7 @@ class ParkingLocation {
         lotID = json['id'] ?? "NO_ID",
         name = json['name'],
         address = json['address'],
-        location = LatLng(json['latitude'], json['longitude']),
+        location = LatLng(json['latitude']+.0, json['longitude']+.0),
         restrictionStart = TimeOfDay.fromDateTime(DateTime.parse(json['open'])),
         restrictionEnd = TimeOfDay.fromDateTime(DateTime.parse(json['close'])),
         restrictedDays = json['days'].map((abbr) =>
@@ -386,12 +386,12 @@ class ParkingLocation {
 
     return (restrictionStart.hour % 12).toString() +
         ":" +
-        restrictionStart.minute.toString() +
+        restrictionStart.minute.toString().padLeft(2,'0') +
         ampmStart +
         " - " +
         (restrictionEnd.hour % 12).toString() +
         ":" +
-        restrictionEnd.minute.toString() +
+        restrictionEnd.minute.toString().padLeft(2,'0') +
         ampmEnd;
   }
 
