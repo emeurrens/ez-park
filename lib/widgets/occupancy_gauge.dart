@@ -24,41 +24,47 @@ class _OccupancyGaugeState extends State<OccupancyGauge> {
   late Timer timer;
 
   // gauge variables
-  int occupancy = 80;
-  int capacity = 100;
-  Color color = const Color(0xFF00007F);
-  late CircularPercentIndicator circularIndicator;
+  late int occupancy;
+  late int capacity;
+  late double fillRatio;
+  late Color color;
 
   @override
   void initState() {
     super.initState();
-    timer = Timer.periodic(const Duration(seconds: 10), (timer) => checkOccupancy());
-    checkOccupancy();
+
+    // Set polling timer to check for changes
+    timer = Timer.periodic(const Duration(seconds: 5), (timer) => updateOccupancy());
+
+    // Check for changes
+    updateOccupancy();
   }
 
-  void checkOccupancy() async {
+  Future<void> _updateLotInfo() async {
     // Update local parking location data according to database information
-    print(widget.lotName + " " + allParkingLocations[widget.lotName]!.lotID);
-    Map<String, dynamic> jsonInput = jsonDecode(await LotDatabaseClient.getLot(allParkingLocations[widget.lotName]!.lotID) as String);
-    jsonInput.putIfAbsent("LotID", () => allParkingLocations[widget.lotName]!.lotID);  // Need to add lotID since lotID is not returned with getLot
-    print(jsonInput);
-
-    allParkingLocations[widget.lotName] =
-        ParkingLocation.fromJson(jsonInput);
+    print("${widget.lotName} ${allParkingLocations[widget.lotName]!.lotID}");
+    Map<String,dynamic> jsonUpdated = await LotDatabaseClient.getLot(allParkingLocations[widget.lotName]!.lotID);
+    print(jsonUpdated);
+    allParkingLocations[widget.lotName] = ParkingLocation.fromJson(jsonUpdated);
     print(allParkingLocations[widget.lotName]!.toJson());
+  }
+
+  void updateOccupancy() {
+    _updateLotInfo();
 
     setState(() {
       // Update occupancy information for gauge
       occupancy = allParkingLocations[widget.lotName]!.occupancy;
       capacity = allParkingLocations[widget.lotName]!.capacity;
+      fillRatio = occupancy.toDouble() / capacity.toDouble();
 
       // Update color according to occupancy percentage
       // If occupancy-capacity ratio is [0-0.4), make color green
-      if (occupancy.toDouble() / capacity.toDouble() < 0.4) {
+      if (fillRatio < 0.4) {
         color = const Color(0xFF00BF00);
       }
       // If occupancy-capacity ratio is 0.4-0.8, make color yellow
-      else if (occupancy.toDouble() / capacity.toDouble() < 0.8) {
+      else if (fillRatio < 0.8) {
         color = const Color(0xFFFFCF00);
       }
       // If occupancy-capacity ratio is 0.8-1.0, make color red
@@ -66,9 +72,6 @@ class _OccupancyGaugeState extends State<OccupancyGauge> {
         color = const Color(0xFFEF0000);
       }
     });
-
-    /// TODO: Update circular gauge according to current occupancy
-    /// (occupancy.toDouble()) / (capacity.toDouble())
   }
 
   @override
@@ -77,7 +80,6 @@ class _OccupancyGaugeState extends State<OccupancyGauge> {
     super.dispose();
   }
 
-  /// TODO: Make circular indicator
   @override
   Widget build(BuildContext context) =>
       Center(
@@ -87,11 +89,11 @@ class _OccupancyGaugeState extends State<OccupancyGauge> {
           radius: MediaQuery.sizeOf(context).width / 4.5 > 120.0 ? 120.0
               : MediaQuery.sizeOf(context).width / 4.5,
           // Width of line
-          lineWidth: 16.0,
+          lineWidth: 18.0,
           // Percent of gauge filled
-          percent: occupancy.toDouble() / capacity.toDouble(),
+          percent: fillRatio,
           progressColor: color,
-          circularStrokeCap: CircularStrokeCap.square,
+          circularStrokeCap: CircularStrokeCap.butt,
           startAngle: 0.0,
           animation: true,
           animateFromLastPercent: true,
@@ -105,7 +107,7 @@ class _OccupancyGaugeState extends State<OccupancyGauge> {
                   ),
                   const TextSpan(
                     text: "\nspaces\n available",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, height: 1.0),
+                    style: TextStyle(fontWeight: FontWeight.normal, fontSize: 18, height: 1.0),
                   ),
                 ],
               ),

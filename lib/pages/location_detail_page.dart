@@ -51,7 +51,12 @@ class _LocationDetailPageState extends State<LocationDetailPage> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Image(
+                        if(currentParkingLocations.selectedParkingLocation.occupancy != -1)
+                          OccupancyGauge(
+                            lotName: currentParkingLocations.selectedParkingLocation.name,
+                          )
+                        else
+                          const Image(
                           height: 150,
                           image: NetworkImage(
                               'https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Florida_Gators_wordmark.png/640px-Florida_Gators_wordmark.png'),
@@ -142,10 +147,6 @@ class _LocationDetailPageState extends State<LocationDetailPage> {
                             ),
                           ],
                         ),
-                        /// TODO: currentParkingLocations.selectedParkingLocation.currentOccupancy == -1 ?
-                        // OccupancyGauge(
-                        //     lotName: currentParkingLocations.selectedParkingLocation.name,
-                        // ),
                         Container(
                             padding: const EdgeInsets.all(8),
                             child: ElevatedButton(
