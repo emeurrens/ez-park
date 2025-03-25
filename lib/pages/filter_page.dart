@@ -85,11 +85,11 @@ class FilterPageState extends State<FilterPage> {
     }
   }
 
-  Color getColor(Set<MaterialState> states) {
-    const Set<MaterialState> interactiveStates = <MaterialState>{
-      MaterialState.pressed,
-      MaterialState.hovered,
-      MaterialState.focused,
+  Color getColor(Set<WidgetState> states) {
+    const Set<WidgetState> interactiveStates = <WidgetState>{
+      WidgetState.pressed,
+      WidgetState.hovered,
+      WidgetState.focused,
     };
     if (states.any(interactiveStates.contains)) {
       return Colors.blue;
@@ -107,7 +107,7 @@ class FilterPageState extends State<FilterPage> {
         ),
         Checkbox(
             checkColor: Colors.white,
-            fillColor: MaterialStateProperty.resolveWith(getColor),
+            fillColor: WidgetStateProperty.resolveWith(getColor),
             value: _showAllLocations,
             onChanged: (bool? newValue) {
               setState(() {
@@ -302,13 +302,13 @@ class FilterPageState extends State<FilterPage> {
                           child: const Text("Apply Filters"),
                           onPressed: _applyFilters,
                           style:
-                              ElevatedButton.styleFrom(primary: Colors.green),
+                              ElevatedButton.styleFrom(foregroundColor: Colors.green),
                         ),
                         ElevatedButton(
                           child: const Text("Reset Filters"),
                           onPressed: _resetFilters,
                           style: ElevatedButton.styleFrom(
-                              primary: Colors.redAccent),
+                              foregroundColor: Colors.redAccent),
                         )
                       ]),
                   statusText(),

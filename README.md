@@ -1,16 +1,14 @@
 # ez_park
 
-A new Flutter project.
+A Flutter-based navigation app to help people find parking on campus.
 
-## Getting Started
+## Documentation and References
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
+For help getting started with Flutter development, view the
+[online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
+
+Drew Gill's original [ez_park repository](https://github.com/drew-gill/ez-park)
+
+Component of capstone project, the [Parking Availability System](https://github.com/emeurrens/parking-availability-system)
+
