@@ -5,25 +5,26 @@ import 'pages/map_view_page.dart';
 import 'pages/filter_page.dart';
 import 'pages/list_view_page.dart';
 import 'pages/location_detail_page.dart';
-import 'data/lot_database_client.dart';
+import 'services/lot_database_client.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   await dotenv.load(fileName: ".env");
 
   // Run app
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  MyApp({Key? key}) : super(key: key);
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
       title: 'EZPark UF',
       home: MainPage(),
-      debugShowCheckedModeBanner: false,
+      // debugShowCheckedModeBanner: false,
     );
   }
 }

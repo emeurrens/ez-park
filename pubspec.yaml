@@ -39,7 +39,6 @@ dependencies:
   flutter_dotenv: ^5.2.1
 
   # Widgets
-  percent_indicator: ^4.2.4
 
   # A E S T H E T I C
   flutter_launcher_icons: ^0.14.3

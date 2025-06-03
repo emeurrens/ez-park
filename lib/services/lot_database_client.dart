@@ -5,7 +5,7 @@ import 'package:flutter/material.dart' show TimeOfDay;
 import 'package:http/http.dart' as http;
 import 'package:http/retry.dart';
 /// Import local files
-import "./all_parking_locations.dart";
+import "../data/all_parking_locations.dart";
 import "../classes/parking_location.dart";
 
 /// Class:

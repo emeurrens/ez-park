@@ -1,5 +1,6 @@
 import 'package:ez_park/classes/parking_location.dart';
 import 'package:ez_park/classes/filtered_parking_locations.dart';
+import 'package:flutter/services.dart';
 
 import '../data/all_parking_locations.dart';
 
@@ -41,6 +42,8 @@ class MapSampleState extends State<MapSample> {
   @override
   void initState() {
     super.initState();
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
+
     _targetPosition = currentParkingLocations.selectedParkingLocation.location;
     _kTargetPosition = CameraPosition(
       target: _targetPosition,
