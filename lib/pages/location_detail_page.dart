@@ -1,6 +1,7 @@
 import 'package:ez_park/classes/filtered_parking_locations.dart';
 import 'package:flutter/material.dart';
 import 'package:map_launcher/map_launcher.dart';
+import '../classes/color_palette.dart';
 
 class LocationDetailPage extends StatefulWidget {
   const LocationDetailPage({Key? key}) : super(key: key);
@@ -39,8 +40,10 @@ class _LocationDetailPageState extends State<LocationDetailPage> {
   Widget build(BuildContext context) => Scaffold(
       appBar: AppBar(
         title: const Text("Parking Details"),
+        backgroundColor: ColorPalette.blue,
+        foregroundColor: ColorPalette.white
       ),
-      backgroundColor: Colors.grey[300],
+      backgroundColor: ColorPalette.white,
       body: LayoutBuilder(
           builder: (context, constraints) => ListView(children: [
                 Container(
