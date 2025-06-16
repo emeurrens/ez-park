@@ -6,8 +6,10 @@
     "skipDataPerms": {
       "type": "bool"
     },
-    "sendData": {
-      "type": "bool"
+    "permissions": {
+      "sendData": {
+        "type": "bool"
+      }
     },
     "filter": {
       "permit": {
@@ -57,7 +59,9 @@
   "defaults": {
     "skipAck": false,
     "skipDataPerms": false,
-    "sendData": false,
+    "permissions": {
+      "sendData": false
+    },
     "filter": {
       "permit": "any",
       "size": 0,
